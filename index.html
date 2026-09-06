@@ -14,6 +14,21 @@
 </head>
 <body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100">
 
+  <!-- Modal Sincronización Tiempo -->
+  <div id="time-sync-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
+      <div class="flex items-center gap-3 text-indigo-400">
+        <span class="text-2xl">⏰</span>
+        <h3 class="text-lg font-bold text-white">¡Paso del tiempo detectado!</h3>
+      </div>
+      <p id="time-sync-text" class="text-sm text-slate-300 leading-relaxed"></p>
+      <div class="flex justify-end gap-3 pt-2">
+        <button type="button" onclick="dismissTimeSync()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Ignorar</button>
+        <button type="button" onclick="applyTimeSync()" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 font-bold text-white rounded-xl shadow-lg">Aplicar Ahorro Acumulado</button>
+      </div>
+    </div>
+  </div>
+
   <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
@@ -21,7 +36,7 @@
         <div class="p-2 bg-indigo-600 rounded-xl shadow-lg">📈</div>
         <div>
           <h1 class="text-xl font-bold text-white">Planifica</h1>
-          <p class="text-xs text-slate-400">Simulador Financiero</p>
+          <p class="text-xs text-slate-400">Simulador Financiero Proactivo</p>
         </div>
       </div>
       
@@ -95,9 +110,10 @@
           </div>
 
           <div class="flex gap-2">
+            <input type="hidden" id="editing-category-id" value="">
             <input type="text" id="cat-name" placeholder="Ej. Casa, Coche..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
             <input type="number" id="cat-amount" min="0" placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <button type="button" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Añadir</button>
+            <button type="button" id="btn-save-category" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Añadir</button>
           </div>
 
           <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
@@ -111,6 +127,7 @@
           </div>
 
           <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <input type="hidden" id="editing-fund-id" value="">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo</label>
               <input type="text" id="fund-name" placeholder="Ej. SIALP" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
@@ -134,41 +151,80 @@
           <div id="funds-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
         </div>
 
-        <!-- 4. Gastos Puntuales / Extra -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h2 class="font-semibold text-slate-100">Gastos Puntuales / Extra</h2>
-            <button type="button" onclick="toggleExtraExpenseForm()" class="text-xs bg-amber-500/20 text-amber-300 px-3 py-1 rounded-lg">Añadir Gasto</button>
+        <!-- 4. Ingresos Extras y Gastos Extras -->
+        <div class="grid grid-cols-1 gap-6">
+          
+          <!-- Ingresos Extras -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <h2 class="font-semibold text-emerald-400">Ingresos Extras / Puntuales</h2>
+              <button type="button" onclick="toggleExtraIncomeForm()" class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg">Añadir Ingreso</button>
+            </div>
+
+            <div id="extra-income-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <input type="hidden" id="editing-income-id" value="">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Concepto</label>
+                <input type="text" id="income-extra-name" placeholder="Ej. Paga Extra, Venta..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+              </div>
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
+                  <input type="number" id="income-extra-amount" min="1" placeholder="1200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
+                  <input type="month" id="income-extra-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 pt-1">
+                <button type="button" onclick="toggleExtraIncomeForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
+                <button type="button" onclick="addExtraIncome()" class="px-3 py-1 text-xs bg-emerald-500 text-slate-950 font-bold rounded-lg">Guardar Ingreso Extra</button>
+              </div>
+            </div>
+
+            <div id="extra-incomes-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
           </div>
 
-          <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-              <input type="text" id="expense-name" placeholder="Ej. Boda" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+          <!-- Gastos Extras -->
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
+              <h2 class="font-semibold text-rose-400">Gastos Puntuales / Extra</h2>
+              <button type="button" onclick="toggleExtraExpenseForm()" class="text-xs bg-rose-500/20 text-rose-300 px-3 py-1 rounded-lg">Añadir Gasto</button>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+
+            <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <input type="hidden" id="editing-expense-id" value="">
               <div>
-                <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
-                <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                <label class="block text-xs text-slate-400 mb-1">Concepto</label>
+                <input type="text" id="expense-name" placeholder="Ej. Boda, Seguro Coche..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
               </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
-                <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
+                  <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
+                  <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 pt-1">
+                <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
+                <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-rose-500 text-white font-bold rounded-lg">Guardar Gasto Extra</button>
               </div>
             </div>
-            <div class="flex justify-end gap-2 pt-1">
-              <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-              <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-amber-500 text-slate-950 font-bold rounded-lg">Guardar Gasto Extra</button>
-            </div>
+
+            <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
           </div>
 
-          <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
         </div>
 
         <!-- 5. Objetivos de Ahorro Form -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <h2 class="font-semibold text-slate-100 border-b border-slate-800 pb-2">Nuevo Objetivo de Ahorro</h2>
+          <h2 class="font-semibold text-slate-100 border-b border-slate-800 pb-2">Objetivo de Ahorro</h2>
           <div class="space-y-3">
+            <input type="hidden" id="editing-goal-id" value="">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Nombre del Objetivo</label>
               <input type="text" id="goal-name" placeholder="Ej. Coche Nuevo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
@@ -185,7 +241,25 @@
               </div>
             </div>
 
-            <button type="button" onclick="addGoal()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Crear Objetivo</button>
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Fuentes de Financiación Permitidas</label>
+              <div class="space-y-1.5 text-xs text-slate-300 pt-1">
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="goal-use-current" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
+                  <span>Cuenta Corriente Actual</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="goal-use-funds" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
+                  <span>Fondos de Inversión</span>
+                </label>
+                <label class="flex items-center gap-2 cursor-pointer">
+                  <input type="checkbox" id="goal-use-savings" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
+                  <span>Ahorro Futuro Generado</span>
+                </label>
+              </div>
+            </div>
+
+            <button type="button" id="btn-save-goal" onclick="addGoal()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Crear / Guardar Objetivo</button>
           </div>
         </div>
 
@@ -209,7 +283,7 @@
             <h2 class="font-semibold text-slate-100">Desglose Detallado por Mes</h2>
             <input type="month" id="select-month-inspector" onchange="renderMonthDetails()" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-200">
           </div>
-          <div id="month-details-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center"></div>
+          <div id="month-details-container" class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center"></div>
         </div>
 
         <!-- Chart -->
@@ -242,24 +316,32 @@
       expenseCategories: [],
       funds: [],
       extraExpenses: [],
-      goals: []
+      extraIncomes: [],
+      goals: [],
+      lastActiveMonth: new Date().toISOString().slice(0, 7)
     };
 
     let state = loadState();
     let extraSimulatedSavings = 0;
     let chartInstance = null;
+    let pendingMonthsPassed = 0;
 
     function loadState() {
       try {
-        const stored = localStorage.getItem('planifica_data_v2');
-        if (stored) return JSON.parse(stored);
+        const stored = localStorage.getItem('planifica_data_v3');
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (!parsed.extraIncomes) parsed.extraIncomes = [];
+          if (!parsed.lastActiveMonth) parsed.lastActiveMonth = new Date().toISOString().slice(0, 7);
+          return parsed;
+        }
       } catch (e) {}
       return JSON.parse(JSON.stringify(DEFAULT_STATE));
     }
 
     function saveState() {
       try {
-        localStorage.setItem('planifica_data_v2', JSON.stringify(state));
+        localStorage.setItem('planifica_data_v3', JSON.stringify(state));
       } catch (e) {}
     }
 
@@ -268,17 +350,16 @@
       const now = new Date();
       const currentMonth = now.toISOString().slice(0, 7);
       
-      const expDate = document.getElementById('expense-date');
-      const inspDate = document.getElementById('select-month-inspector');
-      if (expDate) expDate.value = currentMonth;
-      if (inspDate) inspDate.value = currentMonth;
+      document.getElementById('expense-date').value = currentMonth;
+      document.getElementById('income-extra-date').value = currentMonth;
+      document.getElementById('select-month-inspector').value = currentMonth;
       
       const future = new Date();
       future.setFullYear(now.getFullYear() + 1);
-      const goalDate = document.getElementById('goal-target-date');
-      if (goalDate) goalDate.value = future.toISOString().slice(0, 7);
+      document.getElementById('goal-target-date').value = future.toISOString().slice(0, 7);
 
       syncInputsFromState();
+      checkTimeSync();
       updateAll();
     };
 
@@ -298,6 +379,57 @@
       extraSimulatedSavings = parseFloat(document.getElementById('simulator-slider').value) || 0;
       document.getElementById('simulator-extra-val').innerText = `+${extraSimulatedSavings} €/mes`;
       updateAll();
+    }
+
+    // --- TIME SYNC FEATURE ---
+    function checkTimeSync() {
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      if (!state.lastActiveMonth) {
+        state.lastActiveMonth = currentMonth;
+        saveState();
+        return;
+      }
+
+      if (state.lastActiveMonth < currentMonth) {
+        const d1 = new Date(state.lastActiveMonth + "-01");
+        const d2 = new Date(currentMonth + "-01");
+        pendingMonthsPassed = (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
+
+        if (pendingMonthsPassed > 0) {
+          const monthlySavings = getBaseLiquidSavings();
+          const totalAccumulated = monthlySavings * pendingMonthsPassed;
+
+          document.getElementById('time-sync-text').innerHTML = `
+            Han pasado <strong>${pendingMonthsPassed} mes(es)</strong> desde tu última sesión (${state.lastActiveMonth}).<br><br>
+            Según tus reglas de ahorro actualizadas, deberías haber ahorrado un total de <strong>+${totalAccumulated.toLocaleString('es-ES')} €</strong> en tu Cuenta Corriente.
+          `;
+          document.getElementById('time-sync-modal').classList.remove('hidden');
+        }
+      }
+    }
+
+    function applyTimeSync() {
+      if (pendingMonthsPassed > 0) {
+        const monthlySavings = getBaseLiquidSavings();
+        state.config.currentCapital += (monthlySavings * pendingMonthsPassed);
+
+        // Actualizar también aportaciones a fondos
+        state.funds.forEach(fund => {
+          fund.initialCapital += (fund.monthlyTransfer * pendingMonthsPassed);
+        });
+
+        state.lastActiveMonth = new Date().toISOString().slice(0, 7);
+        saveState();
+        syncInputsFromState();
+        updateAll();
+      }
+      dismissTimeSync();
+    }
+
+    function dismissTimeSync() {
+      state.lastActiveMonth = new Date().toISOString().slice(0, 7);
+      saveState();
+      document.getElementById('time-sync-modal').classList.add('hidden');
     }
 
     // --- CALCULATIONS ---
@@ -321,10 +453,11 @@
       return getBaseLiquidSavings() + extraSimulatedSavings;
     }
 
-    // --- CATEGORIES (GASTOS FIJOS) ---
+    // --- GASTOS FIJOS CATEGORIES ---
     function addExpenseCategory() {
       const nameInput = document.getElementById('cat-name');
       const amountInput = document.getElementById('cat-amount');
+      const editId = document.getElementById('editing-category-id').value;
 
       const name = nameInput.value.trim();
       const amount = parseFloat(amountInput.value);
@@ -334,12 +467,28 @@
         return;
       }
 
-      state.expenseCategories.push({ id: Date.now().toString(), name, amount });
-      saveState();
+      if (editId) {
+        const cat = state.expenseCategories.find(c => c.id === editId);
+        if (cat) { cat.name = name; cat.amount = amount; }
+        document.getElementById('editing-category-id').value = '';
+        document.getElementById('btn-save-category').innerText = 'Añadir';
+      } else {
+        state.expenseCategories.push({ id: Date.now().toString(), name, amount });
+      }
 
+      saveState();
       nameInput.value = '';
       amountInput.value = '';
       updateAll();
+    }
+
+    function editExpenseCategory(id) {
+      const cat = state.expenseCategories.find(c => c.id === id);
+      if (!cat) return;
+      document.getElementById('cat-name').value = cat.name;
+      document.getElementById('cat-amount').value = cat.amount;
+      document.getElementById('editing-category-id').value = cat.id;
+      document.getElementById('btn-save-category').innerText = 'Guardar';
     }
 
     function deleteExpenseCategory(id) {
@@ -350,8 +499,7 @@
 
     function renderExpenseCategories() {
       const container = document.getElementById('expense-categories-list');
-      const total = getTotalExpenses();
-      document.getElementById('total-segmented-expenses').innerText = `Total: ${total.toLocaleString('es-ES')} €/mes`;
+      document.getElementById('total-segmented-expenses').innerText = `Total: ${getTotalExpenses().toLocaleString('es-ES')} €/mes`;
 
       if (state.expenseCategories.length === 0) {
         container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin gastos fijos.</p>`;
@@ -361,8 +509,9 @@
       container.innerHTML = state.expenseCategories.map(cat => `
         <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800 text-xs">
           <span class="text-slate-300 font-medium">${cat.name}</span>
-          <div class="flex items-center gap-3">
-            <span class="font-bold text-white">${cat.amount.toLocaleString('es-ES')} €</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-white mr-1">${cat.amount.toLocaleString('es-ES')} €</span>
+            <button type="button" onclick="editExpenseCategory('${cat.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
             <button type="button" onclick="deleteExpenseCategory('${cat.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
           </div>
         </div>
@@ -372,12 +521,14 @@
     // --- FONDOS DE INVERSIÓN ---
     function toggleFundForm() {
       document.getElementById('fund-form').classList.toggle('hidden');
+      document.getElementById('editing-fund-id').value = '';
     }
 
     function addFund() {
       const nameInput = document.getElementById('fund-name');
       const initialInput = document.getElementById('fund-initial');
       const monthlyInput = document.getElementById('fund-monthly');
+      const editId = document.getElementById('editing-fund-id').value;
 
       const name = nameInput.value.trim();
       const initialCapital = parseFloat(initialInput.value) || 0;
@@ -388,14 +539,33 @@
         return;
       }
 
-      state.funds.push({ id: Date.now().toString(), name, initialCapital, monthlyTransfer });
-      saveState();
+      if (editId) {
+        const fund = state.funds.find(f => f.id === editId);
+        if (fund) {
+          fund.name = name;
+          fund.initialCapital = initialCapital;
+          fund.monthlyTransfer = monthlyTransfer;
+        }
+      } else {
+        state.funds.push({ id: Date.now().toString(), name, initialCapital, monthlyTransfer });
+      }
 
+      saveState();
       nameInput.value = '';
       initialInput.value = '';
       monthlyInput.value = '';
       toggleFundForm();
       updateAll();
+    }
+
+    function editFund(id) {
+      const fund = state.funds.find(f => f.id === id);
+      if (!fund) return;
+      document.getElementById('editing-fund-id').value = fund.id;
+      document.getElementById('fund-name').value = fund.name;
+      document.getElementById('fund-initial').value = fund.initialCapital;
+      document.getElementById('fund-monthly').value = fund.monthlyTransfer;
+      document.getElementById('fund-form').classList.remove('hidden');
     }
 
     function deleteFund(id) {
@@ -415,9 +585,12 @@
 
       container.innerHTML = state.funds.map(fund => `
         <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1">
-          <div class="flex justify-between">
+          <div class="flex justify-between items-center">
             <span class="font-semibold text-violet-300">${fund.name}</span>
-            <button type="button" onclick="deleteFund('${fund.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+            <div class="flex items-center gap-2">
+              <button type="button" onclick="editFund('${fund.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
+              <button type="button" onclick="deleteFund('${fund.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+            </div>
           </div>
           <div class="flex justify-between text-[11px] text-slate-400">
             <span>Inicial: <strong class="text-white">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
@@ -427,15 +600,91 @@
       `).join('');
     }
 
-    // --- GASTOS EXTRA ---
+    // --- INGRESOS EXTRAS ---
+    function toggleExtraIncomeForm() {
+      document.getElementById('extra-income-form').classList.toggle('hidden');
+      document.getElementById('editing-income-id').value = '';
+    }
+
+    function addExtraIncome() {
+      const nameInput = document.getElementById('income-extra-name');
+      const amountInput = document.getElementById('income-extra-amount');
+      const dateInput = document.getElementById('income-extra-date');
+      const editId = document.getElementById('editing-income-id').value;
+
+      const name = nameInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const date = dateInput.value;
+
+      if (!name || isNaN(amount) || amount <= 0 || !date) {
+        alert("Completa todos los datos del ingreso extra.");
+        return;
+      }
+
+      if (editId) {
+        const inc = state.extraIncomes.find(i => i.id === editId);
+        if (inc) { inc.name = name; inc.amount = amount; inc.date = date; }
+      } else {
+        state.extraIncomes.push({ id: Date.now().toString(), name, amount, date });
+      }
+
+      saveState();
+      nameInput.value = '';
+      amountInput.value = '';
+      toggleExtraIncomeForm();
+      updateAll();
+    }
+
+    function editExtraIncome(id) {
+      const inc = state.extraIncomes.find(i => i.id === id);
+      if (!inc) return;
+      document.getElementById('editing-income-id').value = inc.id;
+      document.getElementById('income-extra-name').value = inc.name;
+      document.getElementById('income-extra-amount').value = inc.amount;
+      document.getElementById('income-extra-date').value = inc.date;
+      document.getElementById('extra-income-form').classList.remove('hidden');
+    }
+
+    function deleteExtraIncome(id) {
+      state.extraIncomes = state.extraIncomes.filter(i => i.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderExtraIncomes() {
+      const container = document.getElementById('extra-incomes-list');
+
+      if (state.extraIncomes.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin ingresos extras.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.extraIncomes.map(item => `
+        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800 text-xs">
+          <div>
+            <span class="font-medium text-slate-200">${item.name}</span>
+            <div class="text-[10px] text-slate-500">${item.date}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-emerald-400 mr-1">+${item.amount.toLocaleString('es-ES')} €</span>
+            <button type="button" onclick="editExtraIncome('${item.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
+            <button type="button" onclick="deleteExtraIncome('${item.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- GASTOS EXTRAS ---
     function toggleExtraExpenseForm() {
       document.getElementById('extra-expense-form').classList.toggle('hidden');
+      document.getElementById('editing-expense-id').value = '';
     }
 
     function addExtraExpense() {
       const nameInput = document.getElementById('expense-name');
       const amountInput = document.getElementById('expense-amount');
       const dateInput = document.getElementById('expense-date');
+      const editId = document.getElementById('editing-expense-id').value;
 
       const name = nameInput.value.trim();
       const amount = parseFloat(amountInput.value);
@@ -446,13 +695,28 @@
         return;
       }
 
-      state.extraExpenses.push({ id: Date.now().toString(), name, amount, date });
-      saveState();
+      if (editId) {
+        const exp = state.extraExpenses.find(e => e.id === editId);
+        if (exp) { exp.name = name; exp.amount = amount; exp.date = date; }
+      } else {
+        state.extraExpenses.push({ id: Date.now().toString(), name, amount, date });
+      }
 
+      saveState();
       nameInput.value = '';
       amountInput.value = '';
       toggleExtraExpenseForm();
       updateAll();
+    }
+
+    function editExtraExpense(id) {
+      const exp = state.extraExpenses.find(e => e.id === id);
+      if (!exp) return;
+      document.getElementById('editing-expense-id').value = exp.id;
+      document.getElementById('expense-name').value = exp.name;
+      document.getElementById('expense-amount').value = exp.amount;
+      document.getElementById('expense-date').value = exp.date;
+      document.getElementById('extra-expense-form').classList.remove('hidden');
     }
 
     function deleteExtraExpense(id) {
@@ -475,8 +739,9 @@
             <span class="font-medium text-slate-200">${item.name}</span>
             <div class="text-[10px] text-slate-500">${item.date}</div>
           </div>
-          <div class="flex items-center gap-3">
-            <span class="font-bold text-amber-400">-${item.amount.toLocaleString('es-ES')} €</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-rose-400 mr-1">-${item.amount.toLocaleString('es-ES')} €</span>
+            <button type="button" onclick="editExtraExpense('${item.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
             <button type="button" onclick="deleteExtraExpense('${item.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
           </div>
         </div>
@@ -489,32 +754,41 @@
       const container = document.getElementById('month-details-container');
       if (!monthSelected || !container) return;
 
-      const income = state.config.income;
+      const baseIncome = state.config.income;
       const fixedExpenses = getTotalExpenses();
       const investmentTransfers = getTotalInvestmentMonthly();
 
-      const extraExpensesForMonth = state.extraExpenses
+      const extraIncomeMonth = state.extraIncomes
+        .filter(i => i.date === monthSelected)
+        .reduce((sum, i) => sum + i.amount, 0);
+
+      const extraExpenseMonth = state.extraExpenses
         .filter(e => e.date === monthSelected)
         .reduce((sum, e) => sum + e.amount, 0);
 
-      const netSavings = income - fixedExpenses - investmentTransfers - extraExpensesForMonth + extraSimulatedSavings;
+      const totalIncomeMonth = baseIncome + extraIncomeMonth;
+      const netSavings = totalIncomeMonth - fixedExpenses - investmentTransfers - extraExpenseMonth + extraSimulatedSavings;
 
       container.innerHTML = `
-        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingresos</span>
-          <span class="text-sm font-bold text-slate-200">${income.toLocaleString('es-ES')} €</span>
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingreso Total</span>
+          <span class="text-xs font-bold text-slate-200">${totalIncomeMonth.toLocaleString('es-ES')} €</span>
         </div>
-        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
           <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Fijos</span>
-          <span class="text-sm font-bold text-rose-400">-${fixedExpenses.toLocaleString('es-ES')} €</span>
+          <span class="text-xs font-bold text-rose-400">-${fixedExpenses.toLocaleString('es-ES')} €</span>
         </div>
-        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingresos Extra</span>
+          <span class="text-xs font-bold text-emerald-400">+${extraIncomeMonth.toLocaleString('es-ES')} €</span>
+        </div>
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
           <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Extra</span>
-          <span class="text-sm font-bold text-amber-400">-${extraExpensesForMonth.toLocaleString('es-ES')} €</span>
+          <span class="text-xs font-bold text-rose-400">-${extraExpenseMonth.toLocaleString('es-ES')} €</span>
         </div>
-        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 col-span-2 sm:col-span-1">
           <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ahorro Neto</span>
-          <span class="text-sm font-bold ${netSavings >= 0 ? 'text-emerald-400' : 'text-rose-500'}">${netSavings.toLocaleString('es-ES')} €</span>
+          <span class="text-xs font-bold ${netSavings >= 0 ? 'text-emerald-400' : 'text-rose-500'}">${netSavings.toLocaleString('es-ES')} €</span>
         </div>
       `;
     }
@@ -524,6 +798,11 @@
       const nameInput = document.getElementById('goal-name');
       const amountInput = document.getElementById('goal-amount');
       const dateInput = document.getElementById('goal-target-date');
+      const editId = document.getElementById('editing-goal-id').value;
+
+      const useCurrent = document.getElementById('goal-use-current').checked;
+      const useFunds = document.getElementById('goal-use-funds').checked;
+      const useSavings = document.getElementById('goal-use-savings').checked;
 
       const name = nameInput.value.trim();
       const amount = parseFloat(amountInput.value);
@@ -534,18 +813,55 @@
         return;
       }
 
-      state.goals.push({ id: Date.now().toString(), name, amount, targetDate });
-      saveState();
+      if (editId) {
+        const goal = state.goals.find(g => g.id === editId);
+        if (goal) {
+          goal.name = name;
+          goal.amount = amount;
+          goal.targetDate = targetDate;
+          goal.sources = { useCurrent, useFunds, useSavings };
+        }
+        document.getElementById('editing-goal-id').value = '';
+      } else {
+        state.goals.push({
+          id: Date.now().toString(),
+          name,
+          amount,
+          targetDate,
+          sources: { useCurrent, useFunds, useSavings }
+        });
+      }
 
+      saveState();
       nameInput.value = '';
       amountInput.value = '';
       updateAll();
+    }
+
+    function editGoal(id) {
+      const goal = state.goals.find(g => g.id === id);
+      if (!goal) return;
+      document.getElementById('editing-goal-id').value = goal.id;
+      document.getElementById('goal-name').value = goal.name;
+      document.getElementById('goal-amount').value = goal.amount;
+      document.getElementById('goal-target-date').value = goal.targetDate;
+
+      const sources = goal.sources || { useCurrent: true, useFunds: true, useSavings: true };
+      document.getElementById('goal-use-current').checked = sources.useCurrent;
+      document.getElementById('goal-use-funds').checked = sources.useFunds;
+      document.getElementById('goal-use-savings').checked = sources.useSavings;
     }
 
     function deleteGoal(id) {
       state.goals = state.goals.filter(g => g.id !== id);
       saveState();
       updateAll();
+    }
+
+    function calculateMonthsToTarget(targetDateStr) {
+      const now = new Date();
+      const target = new Date(targetDateStr + "-01");
+      return Math.max(0, (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth()));
     }
 
     function renderGoals() {
@@ -557,24 +873,39 @@
         return;
       }
 
-      const totalWealth = state.config.currentCapital + getTotalInvestmentInitial();
-
       container.innerHTML = state.goals.map(goal => {
-        const percentage = Math.min(100, Math.round((totalWealth / goal.amount) * 100));
+        const sources = goal.sources || { useCurrent: true, useFunds: true, useSavings: true };
+        const monthsLeft = calculateMonthsToTarget(goal.targetDate);
+
+        let availableCapital = 0;
+        if (sources.useCurrent) availableCapital += state.config.currentCapital;
+        if (sources.useFunds) availableCapital += getTotalInvestmentInitial();
+        if (sources.useSavings) availableCapital += (getTotalMonthlySavings() * monthsLeft);
+
+        const percentage = Math.min(100, Math.round((availableCapital / goal.amount) * 100));
 
         return `
           <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex justify-between items-start">
               <div>
                 <h3 class="font-bold text-slate-100 text-base">${goal.name}</h3>
-                <div class="text-xs text-slate-400 mt-0.5">Meta: <span class="text-white font-medium">${goal.amount.toLocaleString('es-ES')} €</span></div>
+                <div class="text-xs text-slate-400 mt-0.5">Meta: <span class="text-white font-medium">${goal.amount.toLocaleString('es-ES')} €</span> (${goal.targetDate})</div>
               </div>
-              <button type="button" onclick="deleteGoal('${goal.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+              <div class="flex items-center gap-2">
+                <button type="button" onclick="editGoal('${goal.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
+                <button type="button" onclick="deleteGoal('${goal.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
+              </div>
+            </div>
+
+            <div class="text-[11px] text-slate-400 flex flex-wrap gap-2">
+              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">
+                Fuentes: ${sources.useCurrent ? 'C/C ' : ''}${sources.useFunds ? 'Fondos ' : ''}${sources.useSavings ? 'Ahorro futuro' : ''}
+              </span>
             </div>
 
             <div class="space-y-1">
               <div class="flex justify-between text-xs text-slate-400">
-                <span>Progreso sobre Patrimonio Total</span>
+                <span>Disponible Proyectado: <strong class="text-white">${availableCapital.toLocaleString('es-ES')} €</strong></span>
                 <span class="font-semibold text-emerald-400">${percentage}%</span>
               </div>
               <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
@@ -611,11 +942,17 @@
 
         if (i > 0) {
           let liquidNet = getTotalMonthlySavings();
-          const extraForMonth = state.extraExpenses
-            .filter(e => e.date === monthKey)
-            .reduce((sum, e) => sum + e.amount, 0);
 
-          liquidNet -= extraForMonth;
+          const extraIncomeMonth = state.extraIncomes
+            .filter(inc => inc.date === monthKey)
+            .reduce((sum, inc) => sum + inc.amount, 0);
+
+          const extraExpenseMonth = state.extraExpenses
+            .filter(exp => exp.date === monthKey)
+            .reduce((sum, exp) => sum + exp.amount, 0);
+
+          liquidNet += extraIncomeMonth;
+          liquidNet -= extraExpenseMonth;
 
           currentLiquid += liquidNet;
           currentInvestment += monthlyInvestmentTransfer;
@@ -677,6 +1014,7 @@
 
       renderExpenseCategories();
       renderFunds();
+      renderExtraIncomes();
       renderExtraExpenses();
       renderMonthDetails();
       renderGoals();
