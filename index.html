@@ -10,6 +10,13 @@
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: #0f172a; }
     ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    
+    /* Ocultar la flecha nativa de details */
+    details > summary::-webkit-details-marker { display: none; }
+    details > summary { list-style: none; }
+    
+    /* Rotación de la flecha cuando está abierto */
+    details[open] summary .accordion-arrow { transform: rotate(180deg); }
   </style>
 </head>
 <body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100">
@@ -102,121 +109,141 @@
           </div>
         </div>
 
-        <!-- 2. Gastos Mensuales Fijos -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h2 class="font-semibold text-slate-100">Gastos Mensuales Fijos</h2>
+        <!-- 2. Gastos Mensuales Fijos (Desplegable) -->
+        <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
+          <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
+            <div class="flex items-center gap-2">
+              <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
+              <h2 class="font-semibold text-slate-100">Gastos Mensuales Fijos</h2>
+            </div>
             <span class="text-xs font-bold text-slate-300" id="total-segmented-expenses">Total: 0 €</span>
-          </div>
+          </summary>
 
-          <div class="flex gap-2">
-            <input type="hidden" id="editing-category-id" value="">
-            <input type="text" id="cat-name" placeholder="Ej. Casa, Coche..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <input type="number" id="cat-amount" min="0" placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-            <button type="button" id="btn-save-category" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Añadir</button>
-          </div>
-
-          <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-        </div>
-
-        <!-- 3. Fondos de Inversión -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h2 class="font-semibold text-slate-100">Fondos de Inversión</h2>
-            <button type="button" onclick="toggleFundForm()" class="text-xs bg-violet-500/20 text-violet-300 px-3 py-1 rounded-lg">Nuevo Fondo</button>
-          </div>
-
-          <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-            <input type="hidden" id="editing-fund-id" value="">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo</label>
-              <input type="text" id="fund-name" placeholder="Ej. SIALP" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+          <div class="p-6 pt-4 space-y-4">
+            <div class="flex gap-2">
+              <input type="hidden" id="editing-category-id" value="">
+              <input type="text" id="cat-name" placeholder="Ej. Casa, Coche..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+              <input type="number" id="cat-amount" min="0" placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
+              <button type="button" id="btn-save-category" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Añadir</button>
             </div>
-            <div class="grid grid-cols-2 gap-3">
+
+            <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+          </div>
+        </details>
+
+        <!-- 3. Fondos de Inversión (Desplegable) -->
+        <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
+          <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
+            <div class="flex items-center gap-2">
+              <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
+              <h2 class="font-semibold text-slate-100">Fondos de Inversión</h2>
+            </div>
+            <button type="button" onclick="event.stopPropagation(); toggleFundForm()" class="text-xs bg-violet-500/20 text-violet-300 px-3 py-1 rounded-lg">Nuevo Fondo</button>
+          </summary>
+
+          <div class="p-6 pt-4 space-y-4">
+            <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+              <input type="hidden" id="editing-fund-id" value="">
               <div>
-                <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
-                <input type="number" id="fund-initial" min="0" placeholder="9015" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo</label>
+                <input type="text" id="fund-name" placeholder="Ej. SIALP" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
               </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
-                <input type="number" id="fund-monthly" min="0" placeholder="150" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+              <div class="grid grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
+                  <input type="number" id="fund-initial" min="0" placeholder="9015" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                </div>
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
+                  <input type="number" id="fund-monthly" min="0" placeholder="150" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                </div>
+              </div>
+              <div class="flex justify-end gap-2 pt-1">
+                <button type="button" onclick="toggleFundForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
+                <button type="button" onclick="addFund()" class="px-3 py-1 text-xs bg-violet-600 text-white font-bold rounded-lg">Guardar Fondo</button>
               </div>
             </div>
-            <div class="flex justify-end gap-2 pt-1">
-              <button type="button" onclick="toggleFundForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-              <button type="button" onclick="addFund()" class="px-3 py-1 text-xs bg-violet-600 text-white font-bold rounded-lg">Guardar Fondo</button>
-            </div>
-          </div>
 
-          <div id="funds-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-        </div>
+            <div id="funds-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+          </div>
+        </details>
 
         <!-- 4. Ingresos Extras y Gastos Extras -->
         <div class="grid grid-cols-1 gap-6">
           
-          <!-- Ingresos Extras -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-              <h2 class="font-semibold text-emerald-400">Ingresos Extras / Puntuales</h2>
-              <button type="button" onclick="toggleExtraIncomeForm()" class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg">Añadir Ingreso</button>
-            </div>
-
-            <div id="extra-income-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <input type="hidden" id="editing-income-id" value="">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-                <input type="text" id="income-extra-name" placeholder="Ej. Paga Extra, Venta..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+          <!-- Ingresos Extras (Desplegable) -->
+          <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
+            <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
+              <div class="flex items-center gap-2">
+                <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
+                <h2 class="font-semibold text-emerald-400">Ingresos Extras / Puntuales</h2>
               </div>
-              <div class="grid grid-cols-2 gap-3">
+              <button type="button" onclick="event.stopPropagation(); toggleExtraIncomeForm()" class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg">Añadir Ingreso</button>
+            </summary>
+
+            <div class="p-6 pt-4 space-y-4">
+              <div id="extra-income-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                <input type="hidden" id="editing-income-id" value="">
                 <div>
-                  <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
-                  <input type="number" id="income-extra-amount" min="1" placeholder="1200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                  <label class="block text-xs text-slate-400 mb-1">Concepto</label>
+                  <input type="text" id="income-extra-name" placeholder="Ej. Paga Extra, Venta..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
                 </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
-                  <input type="month" id="income-extra-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
+                    <input type="number" id="income-extra-amount" min="1" placeholder="1200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                  </div>
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
+                    <input type="month" id="income-extra-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                  </div>
                 </div>
-              </div>
-              <div class="flex justify-end gap-2 pt-1">
-                <button type="button" onclick="toggleExtraIncomeForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-                <button type="button" onclick="addExtraIncome()" class="px-3 py-1 text-xs bg-emerald-500 text-slate-950 font-bold rounded-lg">Guardar Ingreso Extra</button>
-              </div>
-            </div>
-
-            <div id="extra-incomes-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-          </div>
-
-          <!-- Gastos Extras -->
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-            <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-              <h2 class="font-semibold text-rose-400">Gastos Puntuales / Extra</h2>
-              <button type="button" onclick="toggleExtraExpenseForm()" class="text-xs bg-rose-500/20 text-rose-300 px-3 py-1 rounded-lg">Añadir Gasto</button>
-            </div>
-
-            <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <input type="hidden" id="editing-expense-id" value="">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-                <input type="text" id="expense-name" placeholder="Ej. Boda, Seguro Coche..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
-                  <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
-                  <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                <div class="flex justify-end gap-2 pt-1">
+                  <button type="button" onclick="toggleExtraIncomeForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
+                  <button type="button" onclick="addExtraIncome()" class="px-3 py-1 text-xs bg-emerald-500 text-slate-950 font-bold rounded-lg">Guardar Ingreso Extra</button>
                 </div>
               </div>
-              <div class="flex justify-end gap-2 pt-1">
-                <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-                <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-rose-500 text-white font-bold rounded-lg">Guardar Gasto Extra</button>
-              </div>
-            </div>
 
-            <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-          </div>
+              <div id="extra-incomes-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            </div>
+          </details>
+
+          <!-- Gastos Extras (Desplegable) -->
+          <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
+            <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
+              <div class="flex items-center gap-2">
+                <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
+                <h2 class="font-semibold text-rose-400">Gastos Puntuales / Extra</h2>
+              </div>
+              <button type="button" onclick="event.stopPropagation(); toggleExtraExpenseForm()" class="text-xs bg-rose-500/20 text-rose-300 px-3 py-1 rounded-lg">Añadir Gasto</button>
+            </summary>
+
+            <div class="p-6 pt-4 space-y-4">
+              <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+                <input type="hidden" id="editing-expense-id" value="">
+                <div>
+                  <label class="block text-xs text-slate-400 mb-1">Concepto</label>
+                  <input type="text" id="expense-name" placeholder="Ej. Boda, Seguro Coche..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
+                    <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
+                  </div>
+                  <div>
+                    <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
+                    <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
+                  </div>
+                </div>
+                <div class="flex justify-end gap-2 pt-1">
+                  <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
+                  <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-rose-500 text-white font-bold rounded-lg">Guardar Gasto Extra</button>
+                </div>
+              </div>
+
+              <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
+            </div>
+          </details>
 
         </div>
 
