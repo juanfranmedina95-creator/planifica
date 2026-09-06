@@ -320,6 +320,11 @@
         <label class="text-xs text-slate-400">Valor actual (€)</label>
         <input type="number" id="fondo-monto" placeholder="5000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
       </div>
+      <div>
+        <label class="text-xs text-indigo-400 font-medium">Domiciliación mensual (€/mes)</label>
+        <input type="number" id="fondo-domiciliacion" placeholder="100" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
+        <p class="text-[10px] text-slate-400 mt-1">Aportación periódica desde tu cuenta corriente a este fondo.</p>
+      </div>
       <div class="flex gap-2 pt-2">
         <button type="button" onclick="cerrarModal('modal-fondo')" class="w-1/2 bg-slate-700 text-xs py-2.5 rounded-lg text-slate-300 font-semibold">Cancelar</button>
         <button type="button" onclick="guardarFondo()" class="w-1/2 bg-amber-600 text-xs py-2.5 rounded-lg text-white font-bold">Guardar</button>
@@ -351,6 +356,12 @@
       renderizarTodo();
     }
 
+    function cargarInputsFijos() {
+      document.getElementById('inp-ingresos').value = estado.ingresos || 0;
+      document.getElementById('inp-cuenta-corriente').value = estado.corriente || 0;
+      document.getElementById('inp-fondo-emergencia').value = estado.emergencia || 0;
+    }
+
     function cambiarTab(tab) {
       ['general', 'finanzas', 'fondos', 'proyeccion'].forEach(t => {
         document.getElementById(`sec-${t}`).classList.add('hidden');
@@ -361,7 +372,8 @@
     }
 
     function totalFondos() { return (estado.fondos || []).reduce((acc, f) => acc + Number(f.monto || 0), 0); }
-    function totalGastosBase() { return (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0); }
+    function totalDomiciliacionesFondos() { return (estado.fondos || []).reduce((acc, f) => acc + Number(f.domiciliacion || 0), 0); }
+    function totalGastosBase() { return (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0) + totalDomiciliacionesFondos(); }
     function calcularAhorroBase() { return Math.max(0, Number(estado.ingresos || 0) - totalGastosBase()); }
 
     function obtenerMesAnoActual() {
@@ -400,6 +412,21 @@
       actualizarSimulacion();
 
       localStorage.setItem('planifica_data_v7', JSON.stringify(estado));
+    }
+
+    function actualizarIngresos() {
+      estado.ingresos = Number(document.getElementById('inp-ingresos').value || 0);
+      renderizarTodo();
+    }
+
+    function guardarSaldoCorriente() {
+      estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value || 0);
+      renderizarTodo();
+    }
+
+    function guardarFondoEmergencia() {
+      estado.emergencia = Number(document.getElementById('inp-fondo-emergencia').value || 0);
+      renderizarTodo();
     }
 
     function renderizarGastos() {
@@ -447,9 +474,13 @@
       const cont = document.getElementById('contenedor-fondos');
       cont.innerHTML = '';
       (estado.fondos || []).forEach(f => {
+        const domTexto = f.domiciliacion > 0 ? `<span class="text-[10px] text-indigo-400 block">+${Number(f.domiciliacion).toLocaleString()} €/mes</span>` : '';
         cont.innerHTML += `
           <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
-            <span class="text-slate-300 font-medium">${f.nombre}</span>
+            <div>
+              <span class="text-slate-300 font-medium block">${f.nombre}</span>
+              ${domTexto}
+            </div>
             <div class="flex items-center space-x-2">
               <span class="font-bold text-amber-400 mr-2">${Number(f.monto).toLocaleString()} €</span>
               <button type="button" onclick="abrirModalFondo(${f.id})" class="text-slate-400 hover:text-indigo-400 p-1"><i class="fa-solid fa-pen"></i></button>
@@ -460,7 +491,6 @@
       });
     }
 
-    // --- CÁLCULO CASCADA CON FECHA ESTIMADA Y RESTRICCIONES ---
     function renderizarObjetivosCascada() {
       const cont = document.getElementById('contenedor-objetivos');
       cont.innerHTML = '';
@@ -588,41 +618,32 @@
               <span class="font-bold text-white">${obj.nombre}${textoFecha}</span>
               <span class="text-indigo-400 font-bold">${textoSimulacion}</span>
             </div>
-            <p class="text-[11px] text-slate-400">Ritmo simulado: ${usarAhorro ? ahorroTotalMensual + ' €/mes' : 'Solo capital acumulado'}</p>
+            <p class="text-[11px] text-slate-400">Monto: ${Number(obj.monto).toLocaleString()} € | Prioridad: ${obj.prioridad}</p>
           </div>
         `;
       });
     }
 
-    function cargarInputsFijos() {
-      document.getElementById('inp-ingresos').value = estado.ingresos || 0;
-      document.getElementById('inp-cuenta-corriente').value = estado.corriente || 0;
-      document.getElementById('inp-fondo-emergencia').value = estado.emergencia || 0;
-    }
-
-    function actualizarIngresos() { estado.ingresos = Number(document.getElementById('inp-ingresos').value || 0); renderizarTodo(); }
-    function guardarSaldoCorriente() { estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value || 0); renderizarTodo(); }
-    function guardarFondoEmergencia() { estado.emergencia = Number(document.getElementById('inp-fondo-emergencia').value || 0); renderizarTodo(); }
-
-    function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    // MODALES & HELPERS
     function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // --- MODALES ---
     function abrirModalObjetivo(id = null) {
       document.getElementById('obj-id').value = id || '';
+      document.getElementById('modal-obj-titulo').innerText = id ? 'Editar Objetivo' : 'Nuevo Objetivo';
+      
       if (id) {
-        const item = estado.objetivos.find(o => o.id === id);
-        document.getElementById('modal-obj-titulo').innerText = "Editar Objetivo";
-        document.getElementById('obj-nombre').value = item.nombre;
-        document.getElementById('obj-monto').value = item.monto;
-        document.getElementById('obj-prioridad').value = item.prioridad;
-        document.getElementById('obj-mes-destino').value = item.mesDestino || 'Junio';
-        document.getElementById('obj-anio-destino').value = item.anioDestino || 2027;
-        document.getElementById('obj-usar-futuros').checked = item.usarFuturos !== false;
-        document.getElementById('obj-usar-corriente').checked = item.usarCorriente;
-        document.getElementById('obj-usar-fondos').checked = item.usarFondos;
+        const obj = estado.objetivos.find(o => o.id === id);
+        if (obj) {
+          document.getElementById('obj-nombre').value = obj.nombre;
+          document.getElementById('obj-monto').value = obj.monto;
+          document.getElementById('obj-prioridad').value = obj.prioridad;
+          document.getElementById('obj-mes-destino').value = obj.mesDestino || 'Junio';
+          document.getElementById('obj-anio-destino').value = obj.anioDestino || 2027;
+          document.getElementById('obj-usar-futuros').checked = obj.usarFuturos !== false;
+          document.getElementById('obj-usar-corriente').checked = obj.usarCorriente !== false;
+          document.getElementById('obj-usar-fondos').checked = obj.usarFondos || false;
+        }
       } else {
-        document.getElementById('modal-obj-titulo').innerText = "Nuevo Objetivo";
         document.getElementById('obj-nombre').value = '';
         document.getElementById('obj-monto').value = '';
         document.getElementById('obj-prioridad').value = 'Media';
@@ -632,148 +653,190 @@
         document.getElementById('obj-usar-corriente').checked = true;
         document.getElementById('obj-usar-fondos').checked = false;
       }
-      abrirModal('modal-objetivo');
+      document.getElementById('modal-objetivo').classList.remove('hidden');
     }
 
     function guardarObjetivo() {
-      const id = Number(document.getElementById('obj-id').value);
+      const id = document.getElementById('obj-id').value;
       const nombre = document.getElementById('obj-nombre').value.trim();
-      const monto = Number(document.getElementById('obj-monto').value);
+      const monto = Number(document.getElementById('obj-monto').value || 0);
       const prioridad = document.getElementById('obj-prioridad').value;
       const mesDestino = document.getElementById('obj-mes-destino').value;
-      const anioDestino = Number(document.getElementById('obj-anio-destino').value);
+      const anioDestino = Number(document.getElementById('obj-anio-destino').value || 2027);
       const usarFuturos = document.getElementById('obj-usar-futuros').checked;
       const usarCorriente = document.getElementById('obj-usar-corriente').checked;
       const usarFondos = document.getElementById('obj-usar-fondos').checked;
 
-      if (nombre && !isNaN(monto) && monto > 0) {
-        if (!estado.objetivos) estado.objetivos = [];
-        const nuevoObj = { id: id || Date.now(), nombre, monto, prioridad, mesDestino, anioDestino, usarFuturos, usarCorriente, usarFondos };
-        
-        if (id) {
-          const idx = estado.objetivos.findIndex(o => o.id === id);
-          if (idx !== -1) estado.objetivos[idx] = nuevoObj;
-        } else {
-          estado.objetivos.push(nuevoObj);
+      if (!nombre || monto <= 0) return;
+
+      if (id) {
+        const obj = estado.objetivos.find(o => o.id == id);
+        if (obj) {
+          obj.nombre = nombre;
+          obj.monto = monto;
+          obj.prioridad = prioridad;
+          obj.mesDestino = mesDestino;
+          obj.anioDestino = anioDestino;
+          obj.usarFuturos = usarFuturos;
+          obj.usarCorriente = usarCorriente;
+          obj.usarFondos = usarFondos;
         }
-        cerrarModal('modal-objetivo');
-        renderizarTodo();
+      } else {
+        estado.objetivos.push({
+          id: Date.now(),
+          nombre,
+          monto,
+          prioridad,
+          mesDestino,
+          anioDestino,
+          usarFuturos,
+          usarCorriente,
+          usarFondos
+        });
       }
+
+      cerrarModal('modal-objetivo');
+      renderizarTodo();
+    }
+
+    function eliminarObjetivo(id) {
+      estado.objetivos = estado.objetivos.filter(o => o.id !== id);
+      renderizarTodo();
     }
 
     function abrirModalGasto(id = null) {
       document.getElementById('gasto-id').value = id || '';
+      document.getElementById('modal-gasto-titulo').innerText = id ? 'Editar Gasto' : 'Nuevo Gasto';
+      
       if (id) {
-        const item = estado.gastos.find(g => g.id === id);
-        document.getElementById('modal-gasto-titulo').innerText = "Editar Gasto Recurrente";
-        document.getElementById('gasto-nombre').value = item.nombre;
-        document.getElementById('gasto-monto').value = item.monto;
+        const g = estado.gastos.find(x => x.id === id);
+        if (g) {
+          document.getElementById('gasto-nombre').value = g.nombre;
+          document.getElementById('gasto-monto').value = g.monto;
+        }
       } else {
-        document.getElementById('modal-gasto-titulo').innerText = "Nuevo Gasto Recurrente";
         document.getElementById('gasto-nombre').value = '';
         document.getElementById('gasto-monto').value = '';
       }
-      abrirModal('modal-gasto');
+      document.getElementById('modal-gasto').classList.remove('hidden');
     }
 
     function guardarGasto() {
-      const id = Number(document.getElementById('gasto-id').value);
+      const id = document.getElementById('gasto-id').value;
       const nombre = document.getElementById('gasto-nombre').value.trim();
-      const monto = Number(document.getElementById('gasto-monto').value);
+      const monto = Number(document.getElementById('gasto-monto').value || 0);
 
-      if (nombre && !isNaN(monto) && monto > 0) {
-        if (!estado.gastos) estado.gastos = [];
-        if (id) {
-          const idx = estado.gastos.findIndex(g => g.id === id);
-          if (idx !== -1) estado.gastos[idx] = { id, nombre, monto };
-        } else {
-          estado.gastos.push({ id: Date.now(), nombre, monto });
-        }
-        cerrarModal('modal-gasto');
-        renderizarTodo();
+      if (!nombre || monto <= 0) return;
+
+      if (id) {
+        const g = estado.gastos.find(x => x.id == id);
+        if (g) { g.nombre = nombre; g.monto = monto; }
+      } else {
+        estado.gastos.push({ id: Date.now(), nombre, monto });
       }
+
+      cerrarModal('modal-gasto');
+      renderizarTodo();
+    }
+
+    function eliminarGasto(id) {
+      estado.gastos = estado.gastos.filter(g => g.id !== id);
+      renderizarTodo();
     }
 
     function abrirModalExtra(id = null) {
-      const actual = obtenerMesAnoActual();
       document.getElementById('extra-id').value = id || '';
+      document.getElementById('modal-extra-titulo').innerText = id ? 'Editar Extra' : 'Nuevo Extra';
+      
       if (id) {
-        const item = estado.extras.find(e => e.id === id);
-        document.getElementById('modal-extra-titulo').innerText = "Editar Movimiento Extra";
-        document.getElementById('extra-tipo').value = item.tipo;
-        document.getElementById('extra-concepto').value = item.concepto;
-        document.getElementById('extra-monto').value = item.monto;
-        document.getElementById('extra-mes').value = item.mes;
-        document.getElementById('extra-anio').value = item.anio || 2026;
+        const e = estado.extras.find(x => x.id === id);
+        if (e) {
+          document.getElementById('extra-tipo').value = e.tipo;
+          document.getElementById('extra-concepto').value = e.concepto;
+          document.getElementById('extra-monto').value = e.monto;
+          document.getElementById('extra-mes').value = e.mes;
+          document.getElementById('extra-anio').value = e.anio || 2026;
+        }
       } else {
-        document.getElementById('modal-extra-titulo').innerText = "Nuevo Movimiento Extra";
         document.getElementById('extra-tipo').value = 'gasto';
         document.getElementById('extra-concepto').value = '';
         document.getElementById('extra-monto').value = '';
-        document.getElementById('extra-mes').value = actual.mes;
-        document.getElementById('extra-anio').value = actual.anio;
+        document.getElementById('extra-mes').value = 'Junio';
+        document.getElementById('extra-anio').value = 2026;
       }
-      abrirModal('modal-extra');
+      document.getElementById('modal-extra').classList.remove('hidden');
     }
 
     function guardarExtra() {
-      const id = Number(document.getElementById('extra-id').value);
+      const id = document.getElementById('extra-id').value;
       const tipo = document.getElementById('extra-tipo').value;
       const concepto = document.getElementById('extra-concepto').value.trim();
-      const monto = Number(document.getElementById('extra-monto').value);
+      const monto = Number(document.getElementById('extra-monto').value || 0);
       const mes = document.getElementById('extra-mes').value;
-      const anio = Number(document.getElementById('extra-anio').value);
+      const anio = Number(document.getElementById('extra-anio').value || 2026);
 
-      if (concepto && !isNaN(monto) && monto > 0 && anio > 2020) {
-        if (!estado.extras) estado.extras = [];
-        if (id) {
-          const idx = estado.extras.findIndex(e => e.id === id);
-          if (idx !== -1) estado.extras[idx] = { id, tipo, concepto, monto, mes, anio };
-        } else {
-          estado.extras.push({ id: Date.now(), tipo, concepto, monto, mes, anio });
+      if (!concepto || monto <= 0) return;
+
+      if (id) {
+        const e = estado.extras.find(x => x.id == id);
+        if (e) {
+          e.tipo = tipo; e.concepto = concepto; e.monto = monto; e.mes = mes; e.anio = anio;
         }
-        cerrarModal('modal-extra');
-        renderizarTodo();
+      } else {
+        estado.extras.push({ id: Date.now(), tipo, concepto, monto, mes, anio });
       }
+
+      cerrarModal('modal-extra');
+      renderizarTodo();
+    }
+
+    function eliminarExtra(id) {
+      estado.extras = estado.extras.filter(e => e.id !== id);
+      renderizarTodo();
     }
 
     function abrirModalFondo(id = null) {
       document.getElementById('fondo-id').value = id || '';
+      document.getElementById('modal-fondo-titulo').innerText = id ? 'Editar Fondo' : 'Nuevo Fondo';
+      
       if (id) {
-        const item = estado.fondos.find(f => f.id === id);
-        document.getElementById('modal-fondo-titulo').innerText = "Editar Fondo";
-        document.getElementById('fondo-nombre').value = item.nombre;
-        document.getElementById('fondo-monto').value = item.monto;
+        const f = estado.fondos.find(x => x.id === id);
+        if (f) {
+          document.getElementById('fondo-nombre').value = f.nombre;
+          document.getElementById('fondo-monto').value = f.monto;
+          document.getElementById('fondo-domiciliacion').value = f.domiciliacion || '';
+        }
       } else {
-        document.getElementById('modal-fondo-titulo').innerText = "Nuevo Fondo";
         document.getElementById('fondo-nombre').value = '';
         document.getElementById('fondo-monto').value = '';
+        document.getElementById('fondo-domiciliacion').value = '';
       }
-      abrirModal('modal-fondo');
+      document.getElementById('modal-fondo').classList.remove('hidden');
     }
 
     function guardarFondo() {
-      const id = Number(document.getElementById('fondo-id').value);
+      const id = document.getElementById('fondo-id').value;
       const nombre = document.getElementById('fondo-nombre').value.trim();
-      const monto = Number(document.getElementById('fondo-monto').value);
+      const monto = Number(document.getElementById('fondo-monto').value || 0);
+      const domiciliacion = Number(document.getElementById('fondo-domiciliacion').value || 0);
 
-      if (nombre && !isNaN(monto) && monto >= 0) {
-        if (!estado.fondos) estado.fondos = [];
-        if (id) {
-          const idx = estado.fondos.findIndex(f => f.id === id);
-          if (idx !== -1) estado.fondos[idx] = { id, nombre, monto };
-        } else {
-          estado.fondos.push({ id: Date.now(), nombre, monto });
-        }
-        cerrarModal('modal-fondo');
-        renderizarTodo();
+      if (!nombre || monto < 0) return;
+
+      if (id) {
+        const f = estado.fondos.find(x => x.id == id);
+        if (f) { f.nombre = nombre; f.monto = monto; f.domiciliacion = domiciliacion; }
+      } else {
+        estado.fondos.push({ id: Date.now(), nombre, monto, domiciliacion });
       }
+
+      cerrarModal('modal-fondo');
+      renderizarTodo();
     }
 
-    function eliminarGasto(id) { estado.gastos = estado.gastos.filter(g => g.id !== id); renderizarTodo(); }
-    function eliminarExtra(id) { estado.extras = estado.extras.filter(e => e.id !== id); renderizarTodo(); }
-    function eliminarFondo(id) { estado.fondos = estado.fondos.filter(f => f.id !== id); renderizarTodo(); }
-    function eliminarObjetivo(id) { estado.objetivos = estado.objetivos.filter(o => o.id !== id); renderizarTodo(); }
+    function eliminarFondo(id) {
+      estado.fondos = estado.fondos.filter(f => f.id !== id);
+      renderizarTodo();
+    }
 
     window.onload = inicializar;
   </script>
