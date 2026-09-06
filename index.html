@@ -75,7 +75,7 @@
         </h3>
         <div>
           <label class="text-xs text-slate-400">Nómina / Ingresos fijos (€)</label>
-          <input type="number" id="inp-ingresos" value="2500" oninput="actualizarIngresos()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+          <input type="number" id="inp-ingresos" value="0" oninput="actualizarIngresos()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
 
@@ -112,11 +112,11 @@
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div>
           <label class="text-xs text-slate-400">Saldo Cuenta Corriente (€)</label>
-          <input type="number" id="inp-cuenta-corriente" value="6000" oninput="guardarSaldoCorriente()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+          <input type="number" id="inp-cuenta-corriente" value="0" oninput="guardarSaldoCorriente()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
         </div>
         <div>
           <label class="text-xs text-rose-400 font-medium">🛡️ Fondo de Emergencia reservado (€)</label>
-          <input type="number" id="inp-fondo-emergencia" value="2000" oninput="guardarFondoEmergencia()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+          <input type="number" id="inp-fondo-emergencia" value="0" oninput="guardarFondoEmergencia()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
           <p class="text-[10px] text-slate-400 mt-1">Este dinero se conservará en cuenta corriente y no se usará para pagar metas.</p>
         </div>
       </div>
@@ -330,27 +330,17 @@
   <script>
     const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
-    let estado = {
-      ingresos: 2500,
-      gastos: [
-        { id: 1, nombre: "Vivienda / Alquiler", monto: 700 },
-        { id: 2, nombre: "Comida / Supermercado", monto: 350 },
-        { id: 3, nombre: "Transporte", monto: 120 }
-      ],
-      extras: [
-        { id: 1, tipo: 'gasto', concepto: 'Frigorífico Nuevo', monto: 650, mes: 'Julio', anio: 2026 },
-        { id: 2, tipo: 'ingreso', concepto: 'Paga Extra', monto: 1200, mes: 'Julio', anio: 2026 }
-      ],
-      corriente: 6000,
-      emergencia: 2000,
-      fondos: [
-        { id: 1, nombre: "Fondo Indexado Global", monto: 8000 }
-      ],
-      objetivos: [
-        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, prioridad: "Alta", usarFuturos: true, usarFondos: true, usarCorriente: true, mesDestino: "Junio", anioDestino: 2027 },
-        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFuturos: true, usarFondos: false, usarCorriente: false, mesDestino: "Diciembre", anioDestino: 2026 }
-      ]
+    const DEFAULT_STATE = {
+      ingresos: 0,
+      gastos: [],
+      extras: [],
+      corriente: 0,
+      emergencia: 0,
+      fondos: [],
+      objetivos: []
     };
+
+    let estado = { ...DEFAULT_STATE };
 
     function inicializar() {
       const guardado = localStorage.getItem('planifica_data_v7');
