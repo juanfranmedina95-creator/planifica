@@ -1,1085 +1,375 @@
 <!DOCTYPE html>
-<html lang="es" class="h-full bg-slate-900 text-slate-100">
+<html lang="es">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Planifica - Simulación Financiera</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Planifica - Finanzas Personales</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #0f172a; }
-    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
-    
-    /* Ocultar la flecha nativa de details */
-    details > summary::-webkit-details-marker { display: none; }
-    details > summary { list-style: none; }
-    
-    /* Rotación de la flecha cuando está abierto */
-    details[open] summary .accordion-arrow { transform: rotate(180deg); }
+    body { -webkit-tap-highlight-color: transparent; }
+    .pb-safe { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
   </style>
 </head>
-<body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-safe">
 
-  <!-- Modal Sincronización Tiempo -->
-  <div id="time-sync-modal" class="hidden fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-md w-full p-6 space-y-4 shadow-2xl">
-      <div class="flex items-center gap-3 text-indigo-400">
-        <span class="text-2xl">⏰</span>
-        <h3 class="text-lg font-bold text-white">¡Paso del tiempo detectado!</h3>
+  <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-md">
+    <div class="flex items-center space-x-2">
+      <div class="bg-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-chart-line text-white"></i></div>
+      <h1 class="text-xl font-bold tracking-wide text-white">Planifica</h1>
+    </div>
+    <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full font-medium border border-indigo-500/30">Mobile App</span>
+  </header>
+
+  <main class="p-4 max-w-lg mx-auto space-y-6">
+
+    <section id="sec-general" class="space-y-4">
+      <div class="bg-gradient-to-br from-indigo-900 to-slate-800 border border-indigo-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad de Ahorro Mensual</p>
+        <div class="flex items-baseline space-x-2 mt-1">
+          <span id="txt-ahorro-mensual" class="text-3xl font-extrabold text-emerald-400">0 €</span>
+          <span class="text-xs text-slate-400">/ mes</span>
+        </div>
+        <p class="text-xs text-slate-400 mt-2">Calculado automáticamente desde tus ingresos y gastos estimados.</p>
       </div>
-      <p id="time-sync-text" class="text-sm text-slate-300 leading-relaxed"></p>
-      <div class="flex justify-end gap-3 pt-2">
-        <button type="button" onclick="dismissTimeSync()" class="px-4 py-2 text-xs text-slate-400 hover:text-white">Ignorar</button>
-        <button type="button" onclick="applyTimeSync()" class="px-4 py-2 text-xs bg-indigo-600 hover:bg-indigo-500 font-bold text-white rounded-xl shadow-lg">Aplicar Ahorro Acumulado</button>
+
+      <div class="grid grid-cols-2 gap-3">
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <p class="text-xs text-slate-400 font-medium">Cuenta Corriente</p>
+          <p id="txt-cuenta-corriente" class="text-lg font-bold text-slate-100 mt-1">0 €</p>
+        </div>
+        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <p class="text-xs text-slate-400 font-medium">Fondos Inversión</p>
+          <p id="txt-fondos-total" class="text-lg font-bold text-amber-400 mt-1">0 €</p>
+        </div>
+      </div>
+
+      <div class="space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="text-lg font-bold text-white">Mis Objetivos</h2>
+          <button onclick="abrirModalObjetivo()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1">
+            <i class="fa-solid fa-plus"></i><span>Nuevo</span>
+          </button>
+        </div>
+
+        <div id="contenedor-objetivos" class="space-y-3">
+          </div>
+      </div>
+    </section>
+
+    <section id="sec-finanzas" class="space-y-4 hidden">
+      <h2 class="text-lg font-bold text-white">Estimación Mensual</h2>
+      
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <h3 class="text-sm font-semibold text-emerald-400 flex items-center space-x-2">
+          <i class="fa-solid fa-wallet"></i><span>Ingresos Estimados</span>
+        </h3>
+        <div>
+          <label class="text-xs text-slate-400">Ingresos Totales al Mes (€)</label>
+          <input type="number" id="inp-ingresos" value="2000" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+        </div>
+      </div>
+
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <h3 class="text-sm font-semibold text-rose-400 flex items-center space-x-2">
+          <i class="fa-solid fa-receipt"></i><span>Gastos Estimados por Categoría</span>
+        </h3>
+        <div class="grid grid-cols-2 gap-3 text-xs">
+          <div>
+            <label class="text-slate-400">Vivienda/Alquiler</label>
+            <input type="number" id="gasto-vivienda" value="600" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
+          </div>
+          <div>
+            <label class="text-slate-400">Alimentación</label>
+            <input type="number" id="gasto-comida" value="300" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
+          </div>
+          <div>
+            <label class="text-slate-400">Transporte</label>
+            <input type="number" id="gasto-transporte" value="100" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
+          </div>
+          <div>
+            <label class="text-slate-400">Ocio y Otros</label>
+            <input type="number" id="gasto-ocio" value="200" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
+          <i class="fa-solid fa-triangle-exclamation"></i><span>Gastos Extras del Mes</span>
+        </h3>
+        <div class="flex gap-2">
+          <input type="number" id="gasto-extra" placeholder="Monto extra (€)" class="w-2/3 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+          <button onclick="aplicarGastoExtra()" class="w-1/3 bg-amber-600 hover:bg-amber-500 text-xs font-bold rounded-lg text-white">Aplicar</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-fondos" class="space-y-4 hidden">
+      <h2 class="text-lg font-bold text-white">Gestión de Cuentas</h2>
+
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <div>
+          <label class="text-xs text-slate-400">Saldo Cuenta Corriente (€)</label>
+          <input type="number" id="inp-cuenta-corriente" value="5000" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Fondos de Inversión (Intocables) (€)</label>
+          <input type="number" id="inp-fondos" value="12000" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+        </div>
+      </div>
+
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <h3 class="text-sm font-semibold text-indigo-400 flex items-center space-x-2">
+          <i class="fa-solid fa-arrow-right-arrow-left"></i><span>Aportación Mensual Automática</span>
+        </h3>
+        <p class="text-xs text-slate-400">Dinero enviado mensualmente de la Cuenta Corriente al Fondo de Inversión.</p>
+        <div>
+          <label class="text-xs text-slate-400">Traspaso Automático Mensual (€)</label>
+          <input type="number" id="inp-traspaso" value="150" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+        </div>
+      </div>
+    </section>
+
+    <section id="sec-proyeccion" class="space-y-4 hidden">
+      <h2 class="text-lg font-bold text-white">Simulador de Ahorro</h2>
+
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-4">
+        <label class="text-xs text-slate-400 font-medium">¿Ahorro mensual adicional deseado?</label>
+        <input type="range" id="simulador-rango" min="0" max="1000" step="50" value="0" oninput="actualizarSimulacion()" class="w-full accent-indigo-500">
+        <div class="flex justify-between text-xs font-semibold">
+          <span class="text-slate-400">+0 €/mes</span>
+          <span id="txt-extra-simulado" class="text-indigo-400 font-bold">+0 €/mes</span>
+          <span class="text-slate-400">+1000 €/mes</span>
+        </div>
+      </div>
+
+      <div id="contenedor-proyeccion-objetivos" class="space-y-3">
+        </div>
+    </section>
+
+  </main>
+
+  <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 p-2 z-50">
+    <div class="max-w-lg mx-auto grid grid-cols-4 gap-1 text-center">
+      <button onclick="cambiarTab('general')" id="btn-tab-general" class="py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1">
+        <i class="fa-solid fa-house text-lg"></i>
+        <span class="text-[10px] font-medium">General</span>
+      </button>
+      <button onclick="cambiarTab('finanzas')" id="btn-tab-finanzas" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
+        <i class="fa-solid fa-calculator text-lg"></i>
+        <span class="text-[10px] font-medium">Finanzas</span>
+      </button>
+      <button onclick="cambiarTab('fondos')" id="btn-tab-fondos" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
+        <i class="fa-solid fa-piggy-bank text-lg"></i>
+        <span class="text-[10px] font-medium">Fondos</span>
+      </button>
+      <button onclick="cambiarTab('proyeccion')" id="btn-tab-proyeccion" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
+        <i class="fa-solid fa-chart-line text-lg"></i>
+        <span class="text-[10px] font-medium">Proyección</span>
+      </button>
+    </div>
+  </nav>
+
+  <div id="modal-objetivo" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4">
+      <h3 class="text-base font-bold text-white">Nuevo Objetivo</h3>
+      <div>
+        <label class="text-xs text-slate-400">Nombre del objetivo</label>
+        <input type="text" id="obj-nombre" placeholder="Ej: Entrada Piso" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Monto objetivo (€)</label>
+        <input type="number" id="obj-monto" placeholder="30000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Prioridad</label>
+        <select id="obj-prioridad" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+          <option value="Alta">🔴 Alta</option>
+          <option value="Media" selected>🟡 Media</option>
+          <option value="Baja">🟢 Baja</option>
+        </select>
+      </div>
+      <div class="space-y-2 pt-1 text-xs">
+        <label class="flex items-center space-x-2 text-slate-300">
+          <input type="checkbox" id="obj-usar-fondos" class="rounded bg-slate-900 border-slate-700 text-indigo-600">
+          <span>Permitir usar Fondos de Inversión</span>
+        </label>
+        <label class="flex items-center space-x-2 text-slate-300">
+          <input type="checkbox" id="obj-usar-corriente" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
+          <span>Usar saldo actual Cuenta Corriente</span>
+        </label>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="cerrarModalObjetivo()" class="w-1/2 bg-slate-700 text-xs font-semibold py-2 rounded-lg text-slate-300">Cancelar</button>
+        <button onclick="guardarNuevoObjetivo()" class="w-1/2 bg-indigo-600 text-xs font-semibold py-2 rounded-lg text-white">Guardar</button>
       </div>
     </div>
   </div>
 
-  <!-- Header -->
-  <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
-      <div class="flex items-center gap-3">
-        <div class="p-2 bg-indigo-600 rounded-xl shadow-lg">📈</div>
-        <div>
-          <h1 class="text-xl font-bold text-white">Planifica</h1>
-          <p class="text-xs text-slate-400">Simulador Financiero Proactivo</p>
-        </div>
-      </div>
-      
-      <div class="flex items-center gap-2">
-        <button type="button" onclick="exportData()" class="px-3 py-1.5 text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700">Exportar</button>
-        <label class="px-3 py-1.5 text-xs text-slate-300 bg-slate-800 hover:bg-slate-700 rounded-lg border border-slate-700 cursor-pointer">
-          Importar
-          <input type="file" id="importFile" onchange="importData(event)" class="hidden" accept=".json">
-        </label>
-        <button type="button" onclick="resetData()" class="px-3 py-1.5 text-xs text-rose-400 bg-rose-500/10 hover:bg-rose-500/20 rounded-lg">Reiniciar</button>
-      </div>
-    </div>
-  </header>
-
-  <!-- Main Content -->
-  <main class="flex-1 max-w-7xl w-full mx-auto px-4 py-8 space-y-8">
-
-    <!-- KPI Stats -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <span class="text-xs font-semibold uppercase text-slate-400">Cuenta Corriente</span>
-        <div class="text-2xl font-bold text-white mt-1" id="kpi-current-balance">0 €</div>
-        <p class="text-xs text-slate-500 mt-1">Saldo inicial disponible</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <span class="text-xs font-semibold uppercase text-slate-400">Total Fondos</span>
-        <div class="text-2xl font-bold text-white mt-1" id="kpi-investment-balance">0 €</div>
-        <p class="text-xs text-slate-500 mt-1" id="kpi-funds-count">0 fondos</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <span class="text-xs font-semibold uppercase text-slate-400">Ahorro Base / Mes</span>
-        <div class="text-2xl font-bold text-emerald-400 mt-1" id="kpi-liquid-savings">0 €</div>
-        <p class="text-xs text-slate-500 mt-1">Ingresos - Gastos - Inversión</p>
-      </div>
-
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl">
-        <span class="text-xs font-semibold uppercase text-slate-400">Patrimonio Total</span>
-        <div class="text-2xl font-bold text-amber-400 mt-1" id="kpi-total-wealth">0 €</div>
-        <p class="text-xs text-slate-500 mt-1">Cuenta Corriente + Fondos</p>
-      </div>
-    </div>
-
-    <!-- Layout Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
-      
-      <!-- Form Panel -->
-      <div class="lg:col-span-5 space-y-6">
-        
-        <!-- 1. Ingresos y Cuenta Corriente -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <h2 class="font-semibold text-slate-100 border-b border-slate-800 pb-2">Ingresos y Cuenta Corriente</h2>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Ingresos / Mes (€)</label>
-              <input type="number" id="input-income" min="0" value="2300" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-            </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Cuenta Corriente (€)</label>
-              <input type="number" id="input-current-capital" min="0" value="12561" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-indigo-500">
-            </div>
-          </div>
-        </div>
-
-        <!-- 2. Gastos Mensuales Fijos (Desplegable) -->
-        <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
-          <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
-            <div class="flex items-center gap-2">
-              <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
-              <h2 class="font-semibold text-slate-100">Gastos Mensuales Fijos</h2>
-            </div>
-            <span class="text-xs font-bold text-slate-300" id="total-segmented-expenses">Total: 0 €</span>
-          </summary>
-
-          <div class="p-6 pt-4 space-y-4">
-            <div class="flex gap-2">
-              <input type="hidden" id="editing-category-id" value="">
-              <input type="text" id="cat-name" placeholder="Ej. Casa, Coche..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-              <input type="number" id="cat-amount" min="0" placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white">
-              <button type="button" id="btn-save-category" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition">Añadir</button>
-            </div>
-
-            <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-          </div>
-        </details>
-
-        <!-- 3. Fondos de Inversión (Desplegable) -->
-        <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
-          <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
-            <div class="flex items-center gap-2">
-              <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
-              <h2 class="font-semibold text-slate-100">Fondos de Inversión</h2>
-            </div>
-            <button type="button" onclick="event.stopPropagation(); toggleFundForm()" class="text-xs bg-violet-500/20 text-violet-300 px-3 py-1 rounded-lg">Nuevo Fondo</button>
-          </summary>
-
-          <div class="p-6 pt-4 space-y-4">
-            <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-              <input type="hidden" id="editing-fund-id" value="">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo</label>
-                <input type="text" id="fund-name" placeholder="Ej. SIALP" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-              </div>
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
-                  <input type="number" id="fund-initial" min="0" placeholder="9015" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                </div>
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
-                  <input type="number" id="fund-monthly" min="0" placeholder="150" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                </div>
-              </div>
-              <div class="flex justify-end gap-2 pt-1">
-                <button type="button" onclick="toggleFundForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-                <button type="button" onclick="addFund()" class="px-3 py-1 text-xs bg-violet-600 text-white font-bold rounded-lg">Guardar Fondo</button>
-              </div>
-            </div>
-
-            <div id="funds-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-          </div>
-        </details>
-
-        <!-- 4. Ingresos Extras y Gastos Extras -->
-        <div class="grid grid-cols-1 gap-6">
-          
-          <!-- Ingresos Extras (Desplegable) -->
-          <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
-            <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
-              <div class="flex items-center gap-2">
-                <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
-                <h2 class="font-semibold text-emerald-400">Ingresos Extras / Puntuales</h2>
-              </div>
-              <button type="button" onclick="event.stopPropagation(); toggleExtraIncomeForm()" class="text-xs bg-emerald-500/20 text-emerald-300 px-3 py-1 rounded-lg">Añadir Ingreso</button>
-            </summary>
-
-            <div class="p-6 pt-4 space-y-4">
-              <div id="extra-income-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                <input type="hidden" id="editing-income-id" value="">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-                  <input type="text" id="income-extra-name" placeholder="Ej. Paga Extra, Venta..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
-                    <input type="number" id="income-extra-amount" min="1" placeholder="1200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                  </div>
-                  <div>
-                    <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
-                    <input type="month" id="income-extra-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
-                  </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-1">
-                  <button type="button" onclick="toggleExtraIncomeForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-                  <button type="button" onclick="addExtraIncome()" class="px-3 py-1 text-xs bg-emerald-500 text-slate-950 font-bold rounded-lg">Guardar Ingreso Extra</button>
-                </div>
-              </div>
-
-              <div id="extra-incomes-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-            </div>
-          </details>
-
-          <!-- Gastos Extras (Desplegable) -->
-          <details open class="bg-slate-900 border border-slate-800 rounded-2xl shadow-xl overflow-hidden group">
-            <summary class="p-6 cursor-pointer select-none flex justify-between items-center border-b border-slate-800/50">
-              <div class="flex items-center gap-2">
-                <span class="accordion-arrow text-xs text-slate-400 transition-transform duration-200">▼</span>
-                <h2 class="font-semibold text-rose-400">Gastos Puntuales / Extra</h2>
-              </div>
-              <button type="button" onclick="event.stopPropagation(); toggleExtraExpenseForm()" class="text-xs bg-rose-500/20 text-rose-300 px-3 py-1 rounded-lg">Añadir Gasto</button>
-            </summary>
-
-            <div class="p-6 pt-4 space-y-4">
-              <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
-                <input type="hidden" id="editing-expense-id" value="">
-                <div>
-                  <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-                  <input type="text" id="expense-name" placeholder="Ej. Boda, Seguro Coche..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                </div>
-                <div class="grid grid-cols-2 gap-3">
-                  <div>
-                    <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
-                    <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm text-white">
-                  </div>
-                  <div>
-                    <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
-                    <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm text-slate-300">
-                  </div>
-                </div>
-                <div class="flex justify-end gap-2 pt-1">
-                  <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400">Cancelar</button>
-                  <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-rose-500 text-white font-bold rounded-lg">Guardar Gasto Extra</button>
-                </div>
-              </div>
-
-              <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto"></div>
-            </div>
-          </details>
-
-        </div>
-
-        <!-- 5. Objetivos de Ahorro Form -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <h2 class="font-semibold text-slate-100 border-b border-slate-800 pb-2">Objetivo de Ahorro</h2>
-          <div class="space-y-3">
-            <input type="hidden" id="editing-goal-id" value="">
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Nombre del Objetivo</label>
-              <input type="text" id="goal-name" placeholder="Ej. Coche Nuevo" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-            </div>
-
-            <div class="grid grid-cols-2 gap-3">
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Importe Meta (€)</label>
-                <input type="number" id="goal-amount" min="1" placeholder="10000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm text-white">
-              </div>
-              <div>
-                <label class="block text-xs text-slate-400 mb-1">Fecha Límite</label>
-                <input type="month" id="goal-target-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm text-slate-300">
-              </div>
-            </div>
-
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Fuentes de Financiación Permitidas</label>
-              <div class="space-y-1.5 text-xs text-slate-300 pt-1">
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="goal-use-current" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
-                  <span>Cuenta Corriente Actual</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="goal-use-funds" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
-                  <span>Fondos de Inversión</span>
-                </label>
-                <label class="flex items-center gap-2 cursor-pointer">
-                  <input type="checkbox" id="goal-use-savings" class="rounded bg-slate-950 border-slate-700 text-indigo-600 focus:ring-0" checked>
-                  <span>Ahorro Futuro Generado</span>
-                </label>
-              </div>
-            </div>
-
-            <button type="button" id="btn-save-goal" onclick="addGoal()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold rounded-xl transition">Crear / Guardar Objetivo</button>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- Displays Panel -->
-      <div class="lg:col-span-7 space-y-6">
-
-        <!-- Simulator -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-3">
-          <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-slate-100">Simulador Dinámico de Esfuerzo</h2>
-            <span id="simulator-extra-val" class="font-bold text-indigo-400">+0 €/mes</span>
-          </div>
-          <input type="range" id="simulator-slider" min="0" max="1000" step="25" value="0" oninput="updateSimulation()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
-        </div>
-
-        <!-- Monthly Breakdown -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <div class="flex justify-between items-center border-b border-slate-800 pb-2">
-            <h2 class="font-semibold text-slate-100">Desglose Detallado por Mes</h2>
-            <input type="month" id="select-month-inspector" onchange="renderMonthDetails()" class="bg-slate-950 border border-slate-800 rounded-lg px-2 py-1 text-xs text-slate-200">
-          </div>
-          <div id="month-details-container" class="grid grid-cols-2 sm:grid-cols-5 gap-2 text-center"></div>
-        </div>
-
-        <!-- Chart -->
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
-          <h2 class="font-semibold text-slate-100 border-b border-slate-800 pb-2">Proyección Patrimonial (24 Meses)</h2>
-          <div class="h-64 relative">
-            <canvas id="projectionChart"></canvas>
-          </div>
-        </div>
-
-        <!-- Goals List -->
-        <div class="space-y-4">
-          <div class="flex justify-between items-center">
-            <h2 class="font-semibold text-slate-100">Objetivos y Estimaciones</h2>
-            <span id="goals-count" class="text-xs text-slate-400">0 Objetivos</span>
-          </div>
-          <div id="goals-list" class="space-y-4"></div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </main>
-
   <script>
-    // --- STATE MANAGEMENT ---
-    const DEFAULT_STATE = {
-      config: { income: 2300, currentCapital: 12561 },
-      expenseCategories: [],
-      funds: [],
-      extraExpenses: [],
-      extraIncomes: [],
-      goals: [],
-      lastActiveMonth: new Date().toISOString().slice(0, 7)
+    let estado = {
+      ingresos: 2000,
+      gastos: { vivienda: 600, comida: 300, transporte: 100, ocio: 200 },
+      gastoExtra: 0,
+      corriente: 5000,
+      fondos: 12000,
+      traspaso: 150,
+      objetivos: [
+        { id: 1, nombre: "🏠 Entrada para Piso", monto: 40000, prioridad: "Alta", usarFondos: true, usarCorriente: true },
+        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFondos: false, usarCorriente: false }
+      ]
     };
 
-    let state = loadState();
-    let extraSimulatedSavings = 0;
-    let chartInstance = null;
-    let pendingMonthsPassed = 0;
-
-    function loadState() {
-      try {
-        const stored = localStorage.getItem('planifica_data_v3');
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          if (!parsed.extraIncomes) parsed.extraIncomes = [];
-          if (!parsed.lastActiveMonth) parsed.lastActiveMonth = new Date().toISOString().slice(0, 7);
-          return parsed;
-        }
-      } catch (e) {}
-      return JSON.parse(JSON.stringify(DEFAULT_STATE));
+    function inicializar() {
+      const guardado = localStorage.getItem('planifica_data');
+      if (guardado) estado = JSON.parse(guardado);
+      cargarFormularios();
+      renderizarTodo();
     }
 
-    function saveState() {
-      try {
-        localStorage.setItem('planifica_data_v3', JSON.stringify(state));
-      } catch (e) {}
+    function cambiarTab(tab) {
+      ['general', 'finanzas', 'fondos', 'proyeccion'].forEach(t => {
+        document.getElementById(`sec-${t}`).classList.add('hidden');
+        document.getElementById(`btn-tab-${t}`).className = "py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1";
+      });
+      document.getElementById(`sec-${tab}`).classList.remove('hidden');
+      document.getElementById(`btn-tab-${tab}`).className = "py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1 font-bold";
     }
 
-    // --- INITIALIZATION ---
-    window.onload = function() {
-      const now = new Date();
-      const currentMonth = now.toISOString().slice(0, 7);
-      
-      document.getElementById('expense-date').value = currentMonth;
-      document.getElementById('income-extra-date').value = currentMonth;
-      document.getElementById('select-month-inspector').value = currentMonth;
-      
-      const future = new Date();
-      future.setFullYear(now.getFullYear() + 1);
-      document.getElementById('goal-target-date').value = future.toISOString().slice(0, 7);
-
-      syncInputsFromState();
-      checkTimeSync();
-      updateAll();
-    };
-
-    function syncInputsFromState() {
-      document.getElementById('input-income').value = state.config.income;
-      document.getElementById('input-current-capital').value = state.config.currentCapital;
+    function calcularCapacidadAhorro() {
+      const totalGastos = Object.values(estado.gastos).reduce((a, b) => Number(a) + Number(b), 0) + Number(estado.gastoExtra);
+      return Math.max(0, Number(estado.ingresos) - totalGastos);
     }
 
-    function updateConfig() {
-      state.config.income = parseFloat(document.getElementById('input-income').value) || 0;
-      state.config.currentCapital = parseFloat(document.getElementById('input-current-capital').value) || 0;
-      saveState();
-      updateAll();
+    function renderizarTodo() {
+      const ahorro = calcularCapacidadAhorro();
+      document.getElementById('txt-ahorro-mensual').innerText = `${ahorro} €`;
+      document.getElementById('txt-cuenta-corriente').innerText = `${estado.corriente} €`;
+      document.getElementById('txt-fondos-total').innerText = `${estado.fondos} €`;
+
+      renderizarObjetivos();
+      actualizarSimulacion();
+      localStorage.setItem('planifica_data', JSON.stringify(estado));
     }
 
-    function updateSimulation() {
-      extraSimulatedSavings = parseFloat(document.getElementById('simulator-slider').value) || 0;
-      document.getElementById('simulator-extra-val').innerText = `+${extraSimulatedSavings} €/mes`;
-      updateAll();
-    }
-
-    // --- TIME SYNC FEATURE ---
-    function checkTimeSync() {
-      const currentMonth = new Date().toISOString().slice(0, 7);
-      if (!state.lastActiveMonth) {
-        state.lastActiveMonth = currentMonth;
-        saveState();
-        return;
-      }
-
-      if (state.lastActiveMonth < currentMonth) {
-        const d1 = new Date(state.lastActiveMonth + "-01");
-        const d2 = new Date(currentMonth + "-01");
-        pendingMonthsPassed = (d2.getFullYear() - d1.getFullYear()) * 12 + (d2.getMonth() - d1.getMonth());
-
-        if (pendingMonthsPassed > 0) {
-          const monthlySavings = getBaseLiquidSavings();
-          const totalAccumulated = monthlySavings * pendingMonthsPassed;
-
-          document.getElementById('time-sync-text').innerHTML = `
-            Han pasado <strong>${pendingMonthsPassed} mes(es)</strong> desde tu última sesión (${state.lastActiveMonth}).<br><br>
-            Según tus reglas de ahorro actualizadas, deberías haber ahorrado un total de <strong>+${totalAccumulated.toLocaleString('es-ES')} €</strong> en tu Cuenta Corriente.
-          `;
-          document.getElementById('time-sync-modal').classList.remove('hidden');
-        }
-      }
-    }
-
-    function applyTimeSync() {
-      if (pendingMonthsPassed > 0) {
-        const monthlySavings = getBaseLiquidSavings();
-        state.config.currentCapital += (monthlySavings * pendingMonthsPassed);
-
-        // Actualizar también aportaciones a fondos
-        state.funds.forEach(fund => {
-          fund.initialCapital += (fund.monthlyTransfer * pendingMonthsPassed);
-        });
-
-        state.lastActiveMonth = new Date().toISOString().slice(0, 7);
-        saveState();
-        syncInputsFromState();
-        updateAll();
-      }
-      dismissTimeSync();
-    }
-
-    function dismissTimeSync() {
-      state.lastActiveMonth = new Date().toISOString().slice(0, 7);
-      saveState();
-      document.getElementById('time-sync-modal').classList.add('hidden');
-    }
-
-    // --- CALCULATIONS ---
-    function getTotalExpenses() {
-      return (state.expenseCategories || []).reduce((sum, item) => sum + item.amount, 0);
-    }
-
-    function getTotalInvestmentInitial() {
-      return (state.funds || []).reduce((sum, fund) => sum + fund.initialCapital, 0);
-    }
-
-    function getTotalInvestmentMonthly() {
-      return (state.funds || []).reduce((sum, fund) => sum + fund.monthlyTransfer, 0);
-    }
-
-    function getBaseLiquidSavings() {
-      return Math.max(0, state.config.income - getTotalExpenses() - getTotalInvestmentMonthly());
-    }
-
-    function getTotalMonthlySavings() {
-      return getBaseLiquidSavings() + extraSimulatedSavings;
-    }
-
-    // --- GASTOS FIJOS CATEGORIES ---
-    function addExpenseCategory() {
-      const nameInput = document.getElementById('cat-name');
-      const amountInput = document.getElementById('cat-amount');
-      const editId = document.getElementById('editing-category-id').value;
-
-      const name = nameInput.value.trim();
-      const amount = parseFloat(amountInput.value);
-
-      if (!name || isNaN(amount) || amount <= 0) {
-        alert("Introduce un concepto y un importe válido.");
-        return;
-      }
-
-      if (editId) {
-        const cat = state.expenseCategories.find(c => c.id === editId);
-        if (cat) { cat.name = name; cat.amount = amount; }
-        document.getElementById('editing-category-id').value = '';
-        document.getElementById('btn-save-category').innerText = 'Añadir';
-      } else {
-        state.expenseCategories.push({ id: Date.now().toString(), name, amount });
-      }
-
-      saveState();
-      nameInput.value = '';
-      amountInput.value = '';
-      updateAll();
-    }
-
-    function editExpenseCategory(id) {
-      const cat = state.expenseCategories.find(c => c.id === id);
-      if (!cat) return;
-      document.getElementById('cat-name').value = cat.name;
-      document.getElementById('cat-amount').value = cat.amount;
-      document.getElementById('editing-category-id').value = cat.id;
-      document.getElementById('btn-save-category').innerText = 'Guardar';
-    }
-
-    function deleteExpenseCategory(id) {
-      state.expenseCategories = state.expenseCategories.filter(c => c.id !== id);
-      saveState();
-      updateAll();
-    }
-
-    function renderExpenseCategories() {
-      const container = document.getElementById('expense-categories-list');
-      document.getElementById('total-segmented-expenses').innerText = `Total: ${getTotalExpenses().toLocaleString('es-ES')} €/mes`;
-
-      if (state.expenseCategories.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin gastos fijos.</p>`;
-        return;
-      }
-
-      container.innerHTML = state.expenseCategories.map(cat => `
-        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800 text-xs">
-          <span class="text-slate-300 font-medium">${cat.name}</span>
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-white mr-1">${cat.amount.toLocaleString('es-ES')} €</span>
-            <button type="button" onclick="editExpenseCategory('${cat.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
-            <button type="button" onclick="deleteExpenseCategory('${cat.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- FONDOS DE INVERSIÓN ---
-    function toggleFundForm() {
-      document.getElementById('fund-form').classList.toggle('hidden');
-      document.getElementById('editing-fund-id').value = '';
-    }
-
-    function addFund() {
-      const nameInput = document.getElementById('fund-name');
-      const initialInput = document.getElementById('fund-initial');
-      const monthlyInput = document.getElementById('fund-monthly');
-      const editId = document.getElementById('editing-fund-id').value;
-
-      const name = nameInput.value.trim();
-      const initialCapital = parseFloat(initialInput.value) || 0;
-      const monthlyTransfer = parseFloat(monthlyInput.value) || 0;
-
-      if (!name) {
-        alert("Introduce un nombre para el fondo.");
-        return;
-      }
-
-      if (editId) {
-        const fund = state.funds.find(f => f.id === editId);
-        if (fund) {
-          fund.name = name;
-          fund.initialCapital = initialCapital;
-          fund.monthlyTransfer = monthlyTransfer;
-        }
-      } else {
-        state.funds.push({ id: Date.now().toString(), name, initialCapital, monthlyTransfer });
-      }
-
-      saveState();
-      nameInput.value = '';
-      initialInput.value = '';
-      monthlyInput.value = '';
-      toggleFundForm();
-      updateAll();
-    }
-
-    function editFund(id) {
-      const fund = state.funds.find(f => f.id === id);
-      if (!fund) return;
-      document.getElementById('editing-fund-id').value = fund.id;
-      document.getElementById('fund-name').value = fund.name;
-      document.getElementById('fund-initial').value = fund.initialCapital;
-      document.getElementById('fund-monthly').value = fund.monthlyTransfer;
-      document.getElementById('fund-form').classList.remove('hidden');
-    }
-
-    function deleteFund(id) {
-      state.funds = state.funds.filter(f => f.id !== id);
-      saveState();
-      updateAll();
-    }
-
-    function renderFunds() {
-      const container = document.getElementById('funds-list');
-      document.getElementById('kpi-funds-count').innerText = `${state.funds.length} fondo(s)`;
-
-      if (state.funds.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin fondos creados.</p>`;
-        return;
-      }
-
-      container.innerHTML = state.funds.map(fund => `
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 text-xs space-y-1">
-          <div class="flex justify-between items-center">
-            <span class="font-semibold text-violet-300">${fund.name}</span>
-            <div class="flex items-center gap-2">
-              <button type="button" onclick="editFund('${fund.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
-              <button type="button" onclick="deleteFund('${fund.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
-            </div>
-          </div>
-          <div class="flex justify-between text-[11px] text-slate-400">
-            <span>Inicial: <strong class="text-white">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
-            <span>Mensual: <strong class="text-amber-400">+${fund.monthlyTransfer.toLocaleString('es-ES')} €</strong></span>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- INGRESOS EXTRAS ---
-    function toggleExtraIncomeForm() {
-      document.getElementById('extra-income-form').classList.toggle('hidden');
-      document.getElementById('editing-income-id').value = '';
-    }
-
-    function addExtraIncome() {
-      const nameInput = document.getElementById('income-extra-name');
-      const amountInput = document.getElementById('income-extra-amount');
-      const dateInput = document.getElementById('income-extra-date');
-      const editId = document.getElementById('editing-income-id').value;
-
-      const name = nameInput.value.trim();
-      const amount = parseFloat(amountInput.value);
-      const date = dateInput.value;
-
-      if (!name || isNaN(amount) || amount <= 0 || !date) {
-        alert("Completa todos los datos del ingreso extra.");
-        return;
-      }
-
-      if (editId) {
-        const inc = state.extraIncomes.find(i => i.id === editId);
-        if (inc) { inc.name = name; inc.amount = amount; inc.date = date; }
-      } else {
-        state.extraIncomes.push({ id: Date.now().toString(), name, amount, date });
-      }
-
-      saveState();
-      nameInput.value = '';
-      amountInput.value = '';
-      toggleExtraIncomeForm();
-      updateAll();
-    }
-
-    function editExtraIncome(id) {
-      const inc = state.extraIncomes.find(i => i.id === id);
-      if (!inc) return;
-      document.getElementById('editing-income-id').value = inc.id;
-      document.getElementById('income-extra-name').value = inc.name;
-      document.getElementById('income-extra-amount').value = inc.amount;
-      document.getElementById('income-extra-date').value = inc.date;
-      document.getElementById('extra-income-form').classList.remove('hidden');
-    }
-
-    function deleteExtraIncome(id) {
-      state.extraIncomes = state.extraIncomes.filter(i => i.id !== id);
-      saveState();
-      updateAll();
-    }
-
-    function renderExtraIncomes() {
-      const container = document.getElementById('extra-incomes-list');
-
-      if (state.extraIncomes.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin ingresos extras.</p>`;
-        return;
-      }
-
-      container.innerHTML = state.extraIncomes.map(item => `
-        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800 text-xs">
-          <div>
-            <span class="font-medium text-slate-200">${item.name}</span>
-            <div class="text-[10px] text-slate-500">${item.date}</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-emerald-400 mr-1">+${item.amount.toLocaleString('es-ES')} €</span>
-            <button type="button" onclick="editExtraIncome('${item.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
-            <button type="button" onclick="deleteExtraIncome('${item.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- GASTOS EXTRAS ---
-    function toggleExtraExpenseForm() {
-      document.getElementById('extra-expense-form').classList.toggle('hidden');
-      document.getElementById('editing-expense-id').value = '';
-    }
-
-    function addExtraExpense() {
-      const nameInput = document.getElementById('expense-name');
-      const amountInput = document.getElementById('expense-amount');
-      const dateInput = document.getElementById('expense-date');
-      const editId = document.getElementById('editing-expense-id').value;
-
-      const name = nameInput.value.trim();
-      const amount = parseFloat(amountInput.value);
-      const date = dateInput.value;
-
-      if (!name || isNaN(amount) || amount <= 0 || !date) {
-        alert("Completa todos los datos del gasto puntual.");
-        return;
-      }
-
-      if (editId) {
-        const exp = state.extraExpenses.find(e => e.id === editId);
-        if (exp) { exp.name = name; exp.amount = amount; exp.date = date; }
-      } else {
-        state.extraExpenses.push({ id: Date.now().toString(), name, amount, date });
-      }
-
-      saveState();
-      nameInput.value = '';
-      amountInput.value = '';
-      toggleExtraExpenseForm();
-      updateAll();
-    }
-
-    function editExtraExpense(id) {
-      const exp = state.extraExpenses.find(e => e.id === id);
-      if (!exp) return;
-      document.getElementById('editing-expense-id').value = exp.id;
-      document.getElementById('expense-name').value = exp.name;
-      document.getElementById('expense-amount').value = exp.amount;
-      document.getElementById('expense-date').value = exp.date;
-      document.getElementById('extra-expense-form').classList.remove('hidden');
-    }
-
-    function deleteExtraExpense(id) {
-      state.extraExpenses = state.extraExpenses.filter(e => e.id !== id);
-      saveState();
-      updateAll();
-    }
-
-    function renderExtraExpenses() {
-      const container = document.getElementById('extra-expenses-list');
-
-      if (state.extraExpenses.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic text-center py-2">Sin gastos extra.</p>`;
-        return;
-      }
-
-      container.innerHTML = state.extraExpenses.map(item => `
-        <div class="flex justify-between items-center p-2 bg-slate-950 rounded-xl border border-slate-800 text-xs">
-          <div>
-            <span class="font-medium text-slate-200">${item.name}</span>
-            <div class="text-[10px] text-slate-500">${item.date}</div>
-          </div>
-          <div class="flex items-center gap-2">
-            <span class="font-bold text-rose-400 mr-1">-${item.amount.toLocaleString('es-ES')} €</span>
-            <button type="button" onclick="editExtraExpense('${item.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
-            <button type="button" onclick="deleteExtraExpense('${item.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
-          </div>
-        </div>
-      `).join('');
-    }
-
-    // --- MONTHLY BREAKDOWN ---
-    function renderMonthDetails() {
-      const monthSelected = document.getElementById('select-month-inspector').value;
-      const container = document.getElementById('month-details-container');
-      if (!monthSelected || !container) return;
-
-      const baseIncome = state.config.income;
-      const fixedExpenses = getTotalExpenses();
-      const investmentTransfers = getTotalInvestmentMonthly();
-
-      const extraIncomeMonth = state.extraIncomes
-        .filter(i => i.date === monthSelected)
-        .reduce((sum, i) => sum + i.amount, 0);
-
-      const extraExpenseMonth = state.extraExpenses
-        .filter(e => e.date === monthSelected)
-        .reduce((sum, e) => sum + e.amount, 0);
-
-      const totalIncomeMonth = baseIncome + extraIncomeMonth;
-      const netSavings = totalIncomeMonth - fixedExpenses - investmentTransfers - extraExpenseMonth + extraSimulatedSavings;
-
-      container.innerHTML = `
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingreso Total</span>
-          <span class="text-xs font-bold text-slate-200">${totalIncomeMonth.toLocaleString('es-ES')} €</span>
-        </div>
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Fijos</span>
-          <span class="text-xs font-bold text-rose-400">-${fixedExpenses.toLocaleString('es-ES')} €</span>
-        </div>
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingresos Extra</span>
-          <span class="text-xs font-bold text-emerald-400">+${extraIncomeMonth.toLocaleString('es-ES')} €</span>
-        </div>
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Extra</span>
-          <span class="text-xs font-bold text-rose-400">-${extraExpenseMonth.toLocaleString('es-ES')} €</span>
-        </div>
-        <div class="p-2.5 bg-slate-950 rounded-xl border border-slate-800 col-span-2 sm:col-span-1">
-          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ahorro Neto</span>
-          <span class="text-xs font-bold ${netSavings >= 0 ? 'text-emerald-400' : 'text-rose-500'}">${netSavings.toLocaleString('es-ES')} €</span>
-        </div>
-      `;
-    }
-
-    // --- GOALS ---
-    function addGoal() {
-      const nameInput = document.getElementById('goal-name');
-      const amountInput = document.getElementById('goal-amount');
-      const dateInput = document.getElementById('goal-target-date');
-      const editId = document.getElementById('editing-goal-id').value;
-
-      const useCurrent = document.getElementById('goal-use-current').checked;
-      const useFunds = document.getElementById('goal-use-funds').checked;
-      const useSavings = document.getElementById('goal-use-savings').checked;
-
-      const name = nameInput.value.trim();
-      const amount = parseFloat(amountInput.value);
-      const targetDate = dateInput.value;
-
-      if (!name || isNaN(amount) || amount <= 0 || !targetDate) {
-        alert("Completa los datos del objetivo.");
-        return;
-      }
-
-      if (editId) {
-        const goal = state.goals.find(g => g.id === editId);
-        if (goal) {
-          goal.name = name;
-          goal.amount = amount;
-          goal.targetDate = targetDate;
-          goal.sources = { useCurrent, useFunds, useSavings };
-        }
-        document.getElementById('editing-goal-id').value = '';
-      } else {
-        state.goals.push({
-          id: Date.now().toString(),
-          name,
-          amount,
-          targetDate,
-          sources: { useCurrent, useFunds, useSavings }
-        });
-      }
-
-      saveState();
-      nameInput.value = '';
-      amountInput.value = '';
-      updateAll();
-    }
-
-    function editGoal(id) {
-      const goal = state.goals.find(g => g.id === id);
-      if (!goal) return;
-      document.getElementById('editing-goal-id').value = goal.id;
-      document.getElementById('goal-name').value = goal.name;
-      document.getElementById('goal-amount').value = goal.amount;
-      document.getElementById('goal-target-date').value = goal.targetDate;
-
-      const sources = goal.sources || { useCurrent: true, useFunds: true, useSavings: true };
-      document.getElementById('goal-use-current').checked = sources.useCurrent;
-      document.getElementById('goal-use-funds').checked = sources.useFunds;
-      document.getElementById('goal-use-savings').checked = sources.useSavings;
-    }
-
-    function deleteGoal(id) {
-      state.goals = state.goals.filter(g => g.id !== id);
-      saveState();
-      updateAll();
-    }
-
-    function calculateMonthsToTarget(targetDateStr) {
-      const now = new Date();
-      const target = new Date(targetDateStr + "-01");
-      return Math.max(0, (target.getFullYear() - now.getFullYear()) * 12 + (target.getMonth() - now.getMonth()));
-    }
-
-    function renderGoals() {
-      const container = document.getElementById('goals-list');
-      document.getElementById('goals-count').innerText = `${state.goals.length} Objetivo(s)`;
-
-      if (state.goals.length === 0) {
-        container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-500">No hay objetivos creados.</div>`;
-        return;
-      }
-
-      container.innerHTML = state.goals.map(goal => {
-        const sources = goal.sources || { useCurrent: true, useFunds: true, useSavings: true };
-        const monthsLeft = calculateMonthsToTarget(goal.targetDate);
-
-        let availableCapital = 0;
-        if (sources.useCurrent) availableCapital += state.config.currentCapital;
-        if (sources.useFunds) availableCapital += getTotalInvestmentInitial();
-        if (sources.useSavings) availableCapital += (getTotalMonthlySavings() * monthsLeft);
-
-        const percentage = Math.min(100, Math.round((availableCapital / goal.amount) * 100));
-
-        return `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
+    function renderizarObjetivos() {
+      const contenedor = document.getElementById('contenedor-objetivos');
+      contenedor.innerHTML = '';
+
+      // Ordenar por prioridad: Alta > Media > Baja
+      const orden = { "Alta": 1, "Media": 2, "Baja": 3 };
+      const listaOrdenada = [...estado.objetivos].sort((a,b) => orden[a.prioridad] - orden[b.prioridad]);
+
+      listaOrdenada.forEach(obj => {
+        let base = obj.usarCorriente ? Number(estado.corriente) : 0;
+        if (obj.usarFondos) base += Number(estado.fondos);
+        
+        const pct = Math.min(100, Math.round((base / obj.monto) * 100));
+        const colorPrioridad = obj.prioridad === 'Alta' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : 
+                              (obj.prioridad === 'Media' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
+
+        contenedor.innerHTML += `
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
             <div class="flex justify-between items-start">
               <div>
-                <h3 class="font-bold text-slate-100 text-base">${goal.name}</h3>
-                <div class="text-xs text-slate-400 mt-0.5">Meta: <span class="text-white font-medium">${goal.amount.toLocaleString('es-ES')} €</span> (${goal.targetDate})</div>
+                <h4 class="font-bold text-white text-sm">${obj.nombre}</h4>
+                <p class="text-[11px] text-slate-400">Meta: ${obj.monto.toLocaleString()} €</p>
               </div>
-              <div class="flex items-center gap-2">
-                <button type="button" onclick="editGoal('${goal.id}')" class="text-slate-400 hover:text-indigo-400">✏️</button>
-                <button type="button" onclick="deleteGoal('${goal.id}')" class="text-rose-400 font-bold hover:text-rose-300">✕</button>
-              </div>
+              <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
             </div>
-
-            <div class="text-[11px] text-slate-400 flex flex-wrap gap-2">
-              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800">
-                Fuentes: ${sources.useCurrent ? 'C/C ' : ''}${sources.useFunds ? 'Fondos ' : ''}${sources.useSavings ? 'Ahorro futuro' : ''}
-              </span>
+            <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
+              <div class="bg-indigo-500 h-2 rounded-full" style="width: ${pct}%"></div>
             </div>
-
-            <div class="space-y-1">
-              <div class="flex justify-between text-xs text-slate-400">
-                <span>Disponible Proyectado: <strong class="text-white">${availableCapital.toLocaleString('es-ES')} €</strong></span>
-                <span class="font-semibold text-emerald-400">${percentage}%</span>
-              </div>
-              <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
-                <div class="bg-emerald-500 h-full rounded-full transition-all duration-500" style="width: ${percentage}%"></div>
-              </div>
+            <div class="flex justify-between text-[10px] text-slate-400">
+              <span>Fondo inicial: ${base.toLocaleString()} €</span>
+              <span class="font-bold text-indigo-300">${pct}%</span>
             </div>
           </div>
         `;
-      }).join('');
-    }
-
-    // --- CHART ---
-    function updateChart() {
-      const chartEl = document.getElementById('projectionChart');
-      if (!chartEl) return;
-      const ctx = chartEl.getContext('2d');
-      
-      const labels = [];
-      const liquidData = [];
-      const investmentData = [];
-
-      let currentLiquid = state.config.currentCapital;
-      let currentInvestment = getTotalInvestmentInitial();
-      const monthlyInvestmentTransfer = getTotalInvestmentMonthly();
-
-      const now = new Date();
-
-      for (let i = 0; i < 24; i++) {
-        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
-        const monthKey = d.toISOString().slice(0, 7);
-        const monthLabel = d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
-
-        labels.push(monthLabel);
-
-        if (i > 0) {
-          let liquidNet = getTotalMonthlySavings();
-
-          const extraIncomeMonth = state.extraIncomes
-            .filter(inc => inc.date === monthKey)
-            .reduce((sum, inc) => sum + inc.amount, 0);
-
-          const extraExpenseMonth = state.extraExpenses
-            .filter(exp => exp.date === monthKey)
-            .reduce((sum, exp) => sum + exp.amount, 0);
-
-          liquidNet += extraIncomeMonth;
-          liquidNet -= extraExpenseMonth;
-
-          currentLiquid += liquidNet;
-          currentInvestment += monthlyInvestmentTransfer;
-        }
-
-        liquidData.push(Math.round(currentLiquid));
-        investmentData.push(Math.round(currentInvestment));
-      }
-
-      if (chartInstance) {
-        chartInstance.destroy();
-      }
-
-      chartInstance = new Chart(ctx, {
-        type: 'line',
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: 'Cuenta Corriente (€)',
-              data: liquidData,
-              borderColor: '#10b981',
-              backgroundColor: 'rgba(16, 185, 129, 0.1)',
-              fill: true,
-              tension: 0.3
-            },
-            {
-              label: 'Fondos (€)',
-              data: investmentData,
-              borderColor: '#8b5cf6',
-              backgroundColor: 'rgba(139, 92, 246, 0.1)',
-              fill: true,
-              tension: 0.3
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: { labels: { color: '#94a3b8' } }
-          },
-          scales: {
-            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } },
-            y: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b' } }
-          }
-        }
       });
     }
 
-    // --- MAIN RENDER ---
-    function updateAll() {
-      const currentWealth = state.config.currentCapital + getTotalInvestmentInitial();
+    function actualizarSimulacion() {
+      const extra = Number(document.getElementById('simulador-rango').value);
+      document.getElementById('txt-extra-simulado').innerText = `+${extra} €/mes`;
+      
+      const ahorroTotalMensual = calcularCapacidadAhorro() + extra;
+      const contenedor = document.getElementById('contenedor-proyeccion-objetivos');
+      contenedor.innerHTML = '';
 
-      document.getElementById('kpi-current-balance').innerText = `${state.config.currentCapital.toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-investment-balance').innerText = `${getTotalInvestmentInitial().toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-liquid-savings').innerText = `${getBaseLiquidSavings().toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-total-wealth').innerText = `${currentWealth.toLocaleString('es-ES')} €`;
+      estado.objetivos.forEach(obj => {
+        let base = obj.usarCorriente ? Number(estado.corriente) : 0;
+        if (obj.usarFondos) base += Number(estado.fondos);
 
-      renderExpenseCategories();
-      renderFunds();
-      renderExtraIncomes();
-      renderExtraExpenses();
-      renderMonthDetails();
-      renderGoals();
-      updateChart();
+        const faltante = Math.max(0, obj.monto - base);
+        const meses = ahorroTotalMensual > 0 ? Math.ceil(faltante / ahorroTotalMensual) : Infinity;
+
+        contenedor.innerHTML += `
+          <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-1">
+            <div class="flex justify-between items-center text-xs">
+              <span class="font-bold text-white">${obj.nombre}</span>
+              <span class="text-indigo-400 font-bold">${meses === Infinity ? 'Indefinido' : meses + ' meses'}</span>
+            </div>
+            <p class="text-[11px] text-slate-400">Restante: ${faltante.toLocaleString()} €</p>
+          </div>
+        `;
+      });
     }
 
-    // --- EXPORT & RESET ---
-    function exportData() {
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-      const anchor = document.createElement('a');
-      anchor.setAttribute("href", dataStr);
-      anchor.setAttribute("download", `planifica_${new Date().toISOString().slice(0,10)}.json`);
-      anchor.click();
+    function cargarFormularios() {
+      document.getElementById('inp-ingresos').value = estado.ingresos;
+      document.getElementById('gasto-vivienda').value = estado.gastos.vivienda;
+      document.getElementById('gasto-comida').value = estado.gastos.comida;
+      document.getElementById('gasto-transporte').value = estado.gastos.transporte;
+      document.getElementById('gasto-ocio').value = estado.gastos.ocio;
+      document.getElementById('inp-cuenta-corriente').value = estado.corriente;
+      document.getElementById('inp-fondos').value = estado.fondos;
+      document.getElementById('inp-traspaso').value = estado.traspaso;
     }
 
-    function importData(event) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        try {
-          state = JSON.parse(e.target.result);
-          saveState();
-          syncInputsFromState();
-          updateAll();
-        } catch(err) {
-          alert('Archivo no válido.');
-        }
+    function guardarFinanzas() {
+      estado.ingresos = Number(document.getElementById('inp-ingresos').value);
+      estado.gastos = {
+        vivienda: Number(document.getElementById('gasto-vivienda').value),
+        comida: Number(document.getElementById('gasto-comida').value),
+        transporte: Number(document.getElementById('gasto-transporte').value),
+        ocio: Number(document.getElementById('gasto-ocio').value)
       };
-      reader.readAsText(event.target.files[0]);
+      renderizarTodo();
     }
 
-    function resetData() {
-      if (confirm('¿Reiniciar todos los datos?')) {
-        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
-        saveState();
-        syncInputsFromState();
-        updateAll();
-      }
+    function guardarCuentas() {
+      estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value);
+      estado.fondos = Number(document.getElementById('inp-fondos').value);
+      estado.traspaso = Number(document.getElementById('inp-traspaso').value);
+      renderizarTodo();
     }
+
+    function aplicarGastoExtra() {
+      const v = Number(document.getElementById('gasto-extra').value);
+      estado.gastoExtra = v;
+      renderizarTodo();
+    }
+
+    function abrirModalObjetivo() { document.getElementById('modal-objetivo').classList.remove('hidden'); }
+    function cerrarModalObjetivo() { document.getElementById('modal-objetivo').classList.add('hidden'); }
+
+    function guardarNuevoObjetivo() {
+      const nombre = document.getElementById('obj-nombre').value;
+      const monto = Number(document.getElementById('obj-monto').value);
+      const prioridad = document.getElementById('obj-prioridad').value;
+      const usarFondos = document.getElementById('obj-usar-fondos').checked;
+      const usarCorriente = document.getElementById('obj-usar-corriente').checked;
+
+      if (!nombre || !monto) return;
+
+      estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarFondos, usarCorriente });
+      cerrarModalObjetivo();
+      renderizarTodo();
+    }
+
+    window.onload = inicializar;
   </script>
 </body>
 </html>
