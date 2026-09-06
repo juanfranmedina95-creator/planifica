@@ -8,96 +8,93 @@
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
   <style>
     body { -webkit-tap-highlight-color: transparent; }
-    .pb-safe { padding-bottom: calc(4.5rem + env(safe-area-inset-bottom)); }
+    .pb-safe { padding-bottom: calc(5rem + env(safe-area-inset-bottom)); }
   </style>
 </head>
-<body class="bg-slate-900 text-slate-100 min-h-screen pb-safe">
+<body class="bg-slate-900 text-slate-100 min-h-screen pb-safe font-sans">
 
+  <!-- ENCABEZADO -->
   <header class="bg-slate-800 border-b border-slate-700 p-4 sticky top-0 z-40 flex justify-between items-center shadow-md">
     <div class="flex items-center space-x-2">
       <div class="bg-indigo-600 p-2 rounded-lg"><i class="fa-solid fa-chart-line text-white"></i></div>
       <h1 class="text-xl font-bold tracking-wide text-white">Planifica</h1>
     </div>
-    <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full font-medium border border-indigo-500/30">Mobile App</span>
+    <span class="text-xs bg-indigo-500/20 text-indigo-300 px-2.5 py-1 rounded-full font-medium border border-indigo-500/30">Mobile</span>
   </header>
 
+  <!-- CONTENIDO PRINCIPAL -->
   <main class="p-4 max-w-lg mx-auto space-y-6">
 
+    <!-- SECCIÓN 1: VISTA GENERAL -->
     <section id="sec-general" class="space-y-4">
+      <!-- Tarjeta Capacidad Ahorro -->
       <div class="bg-gradient-to-br from-indigo-900 to-slate-800 border border-indigo-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad de Ahorro Mensual</p>
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad Ahorro Mensual Neta</p>
         <div class="flex items-baseline space-x-2 mt-1">
           <span id="txt-ahorro-mensual" class="text-3xl font-extrabold text-emerald-400">0 €</span>
           <span class="text-xs text-slate-400">/ mes</span>
         </div>
-        <p class="text-xs text-slate-400 mt-2">Calculado automáticamente desde tus ingresos y gastos estimados.</p>
+        <p class="text-[11px] text-slate-400 mt-2">Calculado automáticamente desde tus ingresos y gastos configurados.</p>
       </div>
 
+      <!-- Resumen Patrimonio -->
       <div class="grid grid-cols-2 gap-3">
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
           <p class="text-xs text-slate-400 font-medium">Cuenta Corriente</p>
           <p id="txt-cuenta-corriente" class="text-lg font-bold text-slate-100 mt-1">0 €</p>
         </div>
         <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <p class="text-xs text-slate-400 font-medium">Fondos Inversión</p>
+          <p class="text-xs text-slate-400 font-medium">Total en Fondos</p>
           <p id="txt-fondos-total" class="text-lg font-bold text-amber-400 mt-1">0 €</p>
         </div>
       </div>
 
+      <!-- Lista de Objetivos con Prioridades -->
       <div class="space-y-3">
         <div class="flex justify-between items-center">
           <h2 class="text-lg font-bold text-white">Mis Objetivos</h2>
-          <button onclick="abrirModalObjetivo()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1">
+          <button onclick="abrirModal('modal-objetivo')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1">
             <i class="fa-solid fa-plus"></i><span>Nuevo</span>
           </button>
         </div>
-
-        <div id="contenedor-objetivos" class="space-y-3">
-          </div>
+        <div id="contenedor-objetivos" class="space-y-3"></div>
       </div>
     </section>
 
+    <!-- SECCIÓN 2: INGRESOS Y GASTOS (DINÁMICOS) -->
     <section id="sec-finanzas" class="space-y-4 hidden">
       <h2 class="text-lg font-bold text-white">Estimación Mensual</h2>
       
+      <!-- Ingresos -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-emerald-400 flex items-center space-x-2">
           <i class="fa-solid fa-wallet"></i><span>Ingresos Estimados</span>
         </h3>
         <div>
           <label class="text-xs text-slate-400">Ingresos Totales al Mes (€)</label>
-          <input type="number" id="inp-ingresos" value="2000" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
+          <input type="number" id="inp-ingresos" value="2000" oninput="actualizarIngresos()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
 
+      <!-- Gastos por Categorías Dinámicas -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-        <h3 class="text-sm font-semibold text-rose-400 flex items-center space-x-2">
-          <i class="fa-solid fa-receipt"></i><span>Gastos Estimados por Categoría</span>
-        </h3>
-        <div class="grid grid-cols-2 gap-3 text-xs">
-          <div>
-            <label class="text-slate-400">Vivienda/Alquiler</label>
-            <input type="number" id="gasto-vivienda" value="600" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
-          </div>
-          <div>
-            <label class="text-slate-400">Alimentación</label>
-            <input type="number" id="gasto-comida" value="300" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
-          </div>
-          <div>
-            <label class="text-slate-400">Transporte</label>
-            <input type="number" id="gasto-transporte" value="100" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
-          </div>
-          <div>
-            <label class="text-slate-400">Ocio y Otros</label>
-            <input type="number" id="gasto-ocio" value="200" oninput="guardarFinanzas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-white">
-          </div>
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-semibold text-rose-400 flex items-center space-x-2">
+            <i class="fa-solid fa-receipt"></i><span>Gastos Estimados</span>
+          </h3>
+          <button onclick="abrirModal('modal-gasto')" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-1 rounded-lg">
+            <i class="fa-solid fa-plus mr-1"></i>Añadir
+          </button>
         </div>
+        <div id="contenedor-gastos" class="space-y-2"></div>
       </div>
 
+      <!-- Gastos Extra Puntuales -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
-          <i class="fa-solid fa-triangle-exclamation"></i><span>Gastos Extras del Mes</span>
+          <i class="fa-solid fa-triangle-exclamation"></i><span>Gastos Extras Este Mes</span>
         </h3>
+        <p class="text-xs text-slate-400">Gastos puntuales (ej. reparaciones) que afectan solo al mes actual.</p>
         <div class="flex gap-2">
           <input type="number" id="gasto-extra" placeholder="Monto extra (€)" class="w-2/3 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
           <button onclick="aplicarGastoExtra()" class="w-1/3 bg-amber-600 hover:bg-amber-500 text-xs font-bold rounded-lg text-white">Aplicar</button>
@@ -105,32 +102,43 @@
       </div>
     </section>
 
+    <!-- SECCIÓN 3: CUENTAS Y FONDOS (MÚLTIPLES) -->
     <section id="sec-fondos" class="space-y-4 hidden">
-      <h2 class="text-lg font-bold text-white">Gestión de Cuentas</h2>
+      <h2 class="text-lg font-bold text-white">Gestión de Cuentas y Fondos</h2>
 
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-        <div>
-          <label class="text-xs text-slate-400">Saldo Cuenta Corriente (€)</label>
-          <input type="number" id="inp-cuenta-corriente" value="5000" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400">Fondos de Inversión (Intocables) (€)</label>
-          <input type="number" id="inp-fondos" value="12000" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-        </div>
+      <!-- Cuenta Corriente -->
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
+        <label class="text-xs text-slate-400">Saldo Cuenta Corriente (€)</label>
+        <input type="number" id="inp-cuenta-corriente" value="5000" oninput="guardarSaldoCorriente()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
       </div>
 
+      <!-- Lista de Fondos de Inversión Individuales -->
+      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
+            <i class="fa-solid fa-piggy-bank"></i><span>Fondos de Inversión</span>
+          </h3>
+          <button onclick="abrirModal('modal-fondo')" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2 py-1 rounded-lg">
+            <i class="fa-solid fa-plus mr-1"></i>Añadir Fondo
+          </button>
+        </div>
+        <div id="contenedor-fondos" class="space-y-2"></div>
+      </div>
+
+      <!-- Domiciliación/Traspaso Automático -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-indigo-400 flex items-center space-x-2">
-          <i class="fa-solid fa-arrow-right-arrow-left"></i><span>Aportación Mensual Automática</span>
+          <i class="fa-solid fa-arrow-right-arrow-left"></i><span>Traspaso Automático Mensual</span>
         </h3>
-        <p class="text-xs text-slate-400">Dinero enviado mensualmente de la Cuenta Corriente al Fondo de Inversión.</p>
+        <p class="text-xs text-slate-400">Aportación periódica desde Cuenta Corriente hacia tus Inversiones.</p>
         <div>
           <label class="text-xs text-slate-400">Traspaso Automático Mensual (€)</label>
-          <input type="number" id="inp-traspaso" value="150" oninput="guardarCuentas()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
+          <input type="number" id="inp-traspaso" value="150" oninput="guardarTraspaso()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
         </div>
       </div>
     </section>
 
+    <!-- SECCIÓN 4: PROYECCIÓN -->
     <section id="sec-proyeccion" class="space-y-4 hidden">
       <h2 class="text-lg font-bold text-white">Simulador de Ahorro</h2>
 
@@ -144,38 +152,39 @@
         </div>
       </div>
 
-      <div id="contenedor-proyeccion-objetivos" class="space-y-3">
-        </div>
+      <div id="contenedor-proyeccion-objetivos" class="space-y-3"></div>
     </section>
 
   </main>
 
+  <!-- NAVEGACIÓN INFERIOR FIJA -->
   <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 p-2 z-50">
     <div class="max-w-lg mx-auto grid grid-cols-4 gap-1 text-center">
-      <button onclick="cambiarTab('general')" id="btn-tab-general" class="py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1">
+      <button onclick="cambiarTab('general')" id="btn-tab-general" class="py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1 font-bold">
         <i class="fa-solid fa-house text-lg"></i>
-        <span class="text-[10px] font-medium">General</span>
+        <span class="text-[10px]">General</span>
       </button>
       <button onclick="cambiarTab('finanzas')" id="btn-tab-finanzas" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
         <i class="fa-solid fa-calculator text-lg"></i>
-        <span class="text-[10px] font-medium">Finanzas</span>
+        <span class="text-[10px]">Finanzas</span>
       </button>
       <button onclick="cambiarTab('fondos')" id="btn-tab-fondos" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
         <i class="fa-solid fa-piggy-bank text-lg"></i>
-        <span class="text-[10px] font-medium">Fondos</span>
+        <span class="text-[10px]">Fondos</span>
       </button>
       <button onclick="cambiarTab('proyeccion')" id="btn-tab-proyeccion" class="py-2 px-1 rounded-xl text-slate-400 flex flex-col items-center space-y-1">
         <i class="fa-solid fa-chart-line text-lg"></i>
-        <span class="text-[10px] font-medium">Proyección</span>
+        <span class="text-[10px]">Proyección</span>
       </button>
     </div>
   </nav>
 
+  <!-- MODAL: OBJETIVO -->
   <div id="modal-objetivo" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4">
       <h3 class="text-base font-bold text-white">Nuevo Objetivo</h3>
       <div>
-        <label class="text-xs text-slate-400">Nombre del objetivo</label>
+        <label class="text-xs text-slate-400">Nombre</label>
         <input type="text" id="obj-nombre" placeholder="Ej: Entrada Piso" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
       </div>
       <div>
@@ -190,31 +199,77 @@
           <option value="Baja">🟢 Baja</option>
         </select>
       </div>
-      <div class="space-y-2 pt-1 text-xs">
+      <div class="space-y-2 text-xs">
         <label class="flex items-center space-x-2 text-slate-300">
           <input type="checkbox" id="obj-usar-fondos" class="rounded bg-slate-900 border-slate-700 text-indigo-600">
-          <span>Permitir usar Fondos de Inversión</span>
+          <span>Permitir uso de Fondos de Inversión</span>
         </label>
         <label class="flex items-center space-x-2 text-slate-300">
           <input type="checkbox" id="obj-usar-corriente" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
-          <span>Usar saldo actual Cuenta Corriente</span>
+          <span>Usar saldo actual de Cuenta Corriente</span>
         </label>
       </div>
       <div class="flex gap-2 pt-2">
-        <button onclick="cerrarModalObjetivo()" class="w-1/2 bg-slate-700 text-xs font-semibold py-2 rounded-lg text-slate-300">Cancelar</button>
-        <button onclick="guardarNuevoObjetivo()" class="w-1/2 bg-indigo-600 text-xs font-semibold py-2 rounded-lg text-white">Guardar</button>
+        <button onclick="cerrarModal('modal-objetivo')" class="w-1/2 bg-slate-700 text-xs py-2 rounded-lg text-slate-300">Cancelar</button>
+        <button onclick="guardarObjetivo()" class="w-1/2 bg-indigo-600 text-xs py-2 rounded-lg text-white font-bold">Guardar</button>
       </div>
     </div>
   </div>
 
+  <!-- MODAL: CATEGORÍA GASTO -->
+  <div id="modal-gasto" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4">
+      <h3 class="text-base font-bold text-white">Nueva Categoría de Gasto</h3>
+      <div>
+        <label class="text-xs text-slate-400">Categoría</label>
+        <input type="text" id="gasto-nombre" placeholder="Ej: Vivienda, Ocio..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Monto estimado mensual (€)</label>
+        <input type="number" id="gasto-monto" placeholder="300" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="cerrarModal('modal-gasto')" class="w-1/2 bg-slate-700 text-xs py-2 rounded-lg text-slate-300">Cancelar</button>
+        <button onclick="guardarGasto()" class="w-1/2 bg-rose-600 text-xs py-2 rounded-lg text-white font-bold">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: FONDO INVERSIÓN -->
+  <div id="modal-fondo" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4">
+      <h3 class="text-base font-bold text-white">Nuevo Fondo de Inversión</h3>
+      <div>
+        <label class="text-xs text-slate-400">Nombre del Fondo</label>
+        <input type="text" id="fondo-nombre" placeholder="Ej: Indexado S&P500" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Valor actual (€)</label>
+        <input type="number" id="fondo-monto" placeholder="5000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button onclick="cerrarModal('modal-fondo')" class="w-1/2 bg-slate-700 text-xs py-2 rounded-lg text-slate-300">Cancelar</button>
+        <button onclick="guardarFondo()" class="w-1/2 bg-amber-600 text-xs py-2 rounded-lg text-white font-bold">Añadir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LÓGICA Y ESTADO -->
   <script>
     let estado = {
-      ingresos: 2000,
-      gastos: { vivienda: 600, comida: 300, transporte: 100, ocio: 200 },
+      ingresos: 2500,
+      gastos: [
+        { id: 1, nombre: "Vivienda / Alquiler", monto: 700 },
+        { id: 2, nombre: "Comida / Supermercado", monto: 350 },
+        { id: 3, nombre: "Transporte", monto: 120 }
+      ],
       gastoExtra: 0,
-      corriente: 5000,
-      fondos: 12000,
-      traspaso: 150,
+      corriente: 6000,
+      fondos: [
+        { id: 1, nombre: "Fondo Indexado Global", monto: 8000 },
+        { id: 2, nombre: "Fondo Monetario", monto: 3500 }
+      ],
+      traspaso: 200,
       objetivos: [
         { id: 1, nombre: "🏠 Entrada para Piso", monto: 40000, prioridad: "Alta", usarFondos: true, usarCorriente: true },
         { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFondos: false, usarCorriente: false }
@@ -222,9 +277,9 @@
     };
 
     function inicializar() {
-      const guardado = localStorage.getItem('planifica_data');
+      const guardado = localStorage.getItem('planifica_data_v2');
       if (guardado) estado = JSON.parse(guardado);
-      cargarFormularios();
+      cargarInputsFijos();
       renderizarTodo();
     }
 
@@ -237,52 +292,96 @@
       document.getElementById(`btn-tab-${tab}`).className = "py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1 font-bold";
     }
 
+    function totalFondos() {
+      return estado.fondos.reduce((acc, f) => acc + Number(f.monto), 0);
+    }
+
+    function totalGastos() {
+      const gastosOrdinarios = estado.gastos.reduce((acc, g) => acc + Number(g.monto), 0);
+      return gastosOrdinarios + Number(estado.gastoExtra);
+    }
+
     function calcularCapacidadAhorro() {
-      const totalGastos = Object.values(estado.gastos).reduce((a, b) => Number(a) + Number(b), 0) + Number(estado.gastoExtra);
-      return Math.max(0, Number(estado.ingresos) - totalGastos);
+      return Math.max(0, Number(estado.ingresos) - totalGastos());
     }
 
     function renderizarTodo() {
       const ahorro = calcularCapacidadAhorro();
-      document.getElementById('txt-ahorro-mensual').innerText = `${ahorro} €`;
-      document.getElementById('txt-cuenta-corriente').innerText = `${estado.corriente} €`;
-      document.getElementById('txt-fondos-total').innerText = `${estado.fondos} €`;
+      document.getElementById('txt-ahorro-mensual').innerText = `${ahorro.toLocaleString()} €`;
+      document.getElementById('txt-cuenta-corriente').innerText = `${Number(estado.corriente).toLocaleString()} €`;
+      document.getElementById('txt-fondos-total').innerText = `${totalFondos().toLocaleString()} €`;
 
+      renderizarGastos();
+      renderizarFondos();
       renderizarObjetivos();
       actualizarSimulacion();
-      localStorage.setItem('planifica_data', JSON.stringify(estado));
+      localStorage.setItem('planifica_data_v2', JSON.stringify(estado));
+    }
+
+    function renderizarGastos() {
+      const cont = document.getElementById('contenedor-gastos');
+      cont.innerHTML = '';
+      estado.gastos.forEach(g => {
+        cont.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
+            <span class="text-slate-300">${g.nombre}</span>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-rose-400">${Number(g.monto).toLocaleString()} €</span>
+              <button onclick="eliminarGasto(${g.id})" class="text-slate-500 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderizarFondos() {
+      const cont = document.getElementById('contenedor-fondos');
+      cont.innerHTML = '';
+      estado.fondos.forEach(f => {
+        cont.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
+            <span class="text-slate-300">${f.nombre}</span>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-amber-400">${Number(f.monto).toLocaleString()} €</span>
+              <button onclick="eliminarFondo(${f.id})" class="text-slate-500 hover:text-rose-500"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
     }
 
     function renderizarObjetivos() {
-      const contenedor = document.getElementById('contenedor-objetivos');
-      contenedor.innerHTML = '';
+      const cont = document.getElementById('contenedor-objetivos');
+      cont.innerHTML = '';
 
-      // Ordenar por prioridad: Alta > Media > Baja
       const orden = { "Alta": 1, "Media": 2, "Baja": 3 };
       const listaOrdenada = [...estado.objetivos].sort((a,b) => orden[a.prioridad] - orden[b.prioridad]);
 
       listaOrdenada.forEach(obj => {
         let base = obj.usarCorriente ? Number(estado.corriente) : 0;
-        if (obj.usarFondos) base += Number(estado.fondos);
+        if (obj.usarFondos) base += totalFondos();
         
         const pct = Math.min(100, Math.round((base / obj.monto) * 100));
         const colorPrioridad = obj.prioridad === 'Alta' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : 
                               (obj.prioridad === 'Media' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
 
-        contenedor.innerHTML += `
+        cont.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
             <div class="flex justify-between items-start">
               <div>
                 <h4 class="font-bold text-white text-sm">${obj.nombre}</h4>
-                <p class="text-[11px] text-slate-400">Meta: ${obj.monto.toLocaleString()} €</p>
+                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} €</p>
               </div>
-              <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
+              <div class="flex items-center space-x-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
+                <button onclick="eliminarObjetivo(${obj.id})" class="text-slate-500 hover:text-rose-500 text-xs"><i class="fa-solid fa-trash"></i></button>
+              </div>
             </div>
             <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
               <div class="bg-indigo-500 h-2 rounded-full" style="width: ${pct}%"></div>
             </div>
             <div class="flex justify-between text-[10px] text-slate-400">
-              <span>Fondo inicial: ${base.toLocaleString()} €</span>
+              <span>Capital computable: ${base.toLocaleString()} €</span>
               <span class="font-bold text-indigo-300">${pct}%</span>
             </div>
           </div>
@@ -295,79 +394,79 @@
       document.getElementById('txt-extra-simulado').innerText = `+${extra} €/mes`;
       
       const ahorroTotalMensual = calcularCapacidadAhorro() + extra;
-      const contenedor = document.getElementById('contenedor-proyeccion-objetivos');
-      contenedor.innerHTML = '';
+      const cont = document.getElementById('contenedor-proyeccion-objetivos');
+      cont.innerHTML = '';
 
       estado.objetivos.forEach(obj => {
         let base = obj.usarCorriente ? Number(estado.corriente) : 0;
-        if (obj.usarFondos) base += Number(estado.fondos);
+        if (obj.usarFondos) base += totalFondos();
 
         const faltante = Math.max(0, obj.monto - base);
         const meses = ahorroTotalMensual > 0 ? Math.ceil(faltante / ahorroTotalMensual) : Infinity;
 
-        contenedor.innerHTML += `
+        cont.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-1">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-white">${obj.nombre}</span>
               <span class="text-indigo-400 font-bold">${meses === Infinity ? 'Indefinido' : meses + ' meses'}</span>
             </div>
-            <p class="text-[11px] text-slate-400">Restante: ${faltante.toLocaleString()} €</p>
+            <p class="text-[11px] text-slate-400">Faltan: ${faltante.toLocaleString()} € a ${ahorroTotalMensual} €/mes</p>
           </div>
         `;
       });
     }
 
-    function cargarFormularios() {
+    function cargarInputsFijos() {
       document.getElementById('inp-ingresos').value = estado.ingresos;
-      document.getElementById('gasto-vivienda').value = estado.gastos.vivienda;
-      document.getElementById('gasto-comida').value = estado.gastos.comida;
-      document.getElementById('gasto-transporte').value = estado.gastos.transporte;
-      document.getElementById('gasto-ocio').value = estado.gastos.ocio;
       document.getElementById('inp-cuenta-corriente').value = estado.corriente;
-      document.getElementById('inp-fondos').value = estado.fondos;
       document.getElementById('inp-traspaso').value = estado.traspaso;
     }
 
-    function guardarFinanzas() {
-      estado.ingresos = Number(document.getElementById('inp-ingresos').value);
-      estado.gastos = {
-        vivienda: Number(document.getElementById('gasto-vivienda').value),
-        comida: Number(document.getElementById('gasto-comida').value),
-        transporte: Number(document.getElementById('gasto-transporte').value),
-        ocio: Number(document.getElementById('gasto-ocio').value)
-      };
-      renderizarTodo();
+    function actualizarIngresos() { estado.ingresos = Number(document.getElementById('inp-ingresos').value); renderizarTodo(); }
+    function guardarSaldoCorriente() { estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value); renderizarTodo(); }
+    function guardarTraspaso() { estado.traspaso = Number(document.getElementById('inp-traspaso').value); renderizarTodo(); }
+    function aplicarGastoExtra() { estado.gastoExtra = Number(document.getElementById('gasto-extra').value); renderizarTodo(); }
+
+    function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+    function guardarGasto() {
+      const nombre = document.getElementById('gasto-nombre').value;
+      const monto = Number(document.getElementById('gasto-monto').value);
+      if (nombre && monto) {
+        estado.gastos.push({ id: Date.now(), nombre, monto });
+        cerrarModal('modal-gasto');
+        renderizarTodo();
+      }
     }
 
-    function guardarCuentas() {
-      estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value);
-      estado.fondos = Number(document.getElementById('inp-fondos').value);
-      estado.traspaso = Number(document.getElementById('inp-traspaso').value);
-      renderizarTodo();
+    function guardarFondo() {
+      const nombre = document.getElementById('fondo-nombre').value;
+      const monto = Number(document.getElementById('fondo-monto').value);
+      if (nombre && monto) {
+        estado.fondos.push({ id: Date.now(), nombre, monto });
+        cerrarModal('modal-fondo');
+        renderizarTodo();
+      }
     }
 
-    function aplicarGastoExtra() {
-      const v = Number(document.getElementById('gasto-extra').value);
-      estado.gastoExtra = v;
-      renderizarTodo();
-    }
-
-    function abrirModalObjetivo() { document.getElementById('modal-objetivo').classList.remove('hidden'); }
-    function cerrarModalObjetivo() { document.getElementById('modal-objetivo').classList.add('hidden'); }
-
-    function guardarNuevoObjetivo() {
+    function guardarObjetivo() {
       const nombre = document.getElementById('obj-nombre').value;
       const monto = Number(document.getElementById('obj-monto').value);
       const prioridad = document.getElementById('obj-prioridad').value;
       const usarFondos = document.getElementById('obj-usar-fondos').checked;
       const usarCorriente = document.getElementById('obj-usar-corriente').checked;
 
-      if (!nombre || !monto) return;
-
-      estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarFondos, usarCorriente });
-      cerrarModalObjetivo();
-      renderizarTodo();
+      if (nombre && monto) {
+        estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarFondos, usarCorriente });
+        cerrarModal('modal-objetivo');
+        renderizarTodo();
+      }
     }
+
+    function eliminarGasto(id) { estado.gastos = estado.gastos.filter(g => g.id !== id); renderizarTodo(); }
+    function eliminarFondo(id) { estado.fondos = estado.fondos.filter(f => f.id !== id); renderizarTodo(); }
+    function eliminarObjetivo(id) { estado.objetivos = estado.objetivos.filter(o => o.id !== id); renderizarTodo(); }
 
     window.onload = inicializar;
   </script>
