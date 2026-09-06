@@ -24,39 +24,19 @@
               800: '#1e40af',
               900: '#1e3a8a',
             },
-            emerald: {
-              400: '#34d399',
-              500: '#10b981',
-              600: '#059669',
-            },
-            amber: {
-              400: '#fbbf24',
-              500: '#f59e0b',
-            },
-            violet: {
-              500: '#8b5cf6',
-              600: '#7c3aed',
-            }
+            emerald: { 400: '#34d399', 500: '#10b981', 600: '#059669' },
+            amber: { 400: '#fbbf24', 500: '#f59e0b' },
+            violet: { 500: '#8b5cf6', 600: '#7c3aed' }
           }
         }
       }
     }
   </script>
   <style>
-    ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #0f172a;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
-    }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #0f172a; }
+    ::-webkit-scrollbar-thumb { background: #334155; border-radius: 3px; }
+    ::-webkit-scrollbar-thumb:hover { background: #475569; }
   </style>
 </head>
 <body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
@@ -92,24 +72,18 @@
   <!-- Main Content -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
-    <!-- KPI Summary Dashboard -->
+    <!-- Dashboard Key Stats -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-blue-500/50 transition duration-300">
-        <div class="absolute -right-2 -bottom-2 opacity-5 text-blue-500 group-hover:scale-110 transition">
-          <i data-lucide="wallet" class="w-24 h-24"></i>
-        </div>
         <div class="flex justify-between items-start mb-2">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Cuenta Corriente</span>
           <span class="p-1.5 bg-blue-500/10 text-blue-400 rounded-lg"><i data-lucide="wallet" class="w-4 h-4"></i></span>
         </div>
         <div class="text-2xl font-bold text-white mb-1" id="kpi-current-balance">0 €</div>
-        <p class="text-xs text-slate-400">Saldo líquido inicial disponible</p>
+        <p class="text-xs text-slate-400">Saldo inicial disponible</p>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-violet-500/50 transition duration-300">
-        <div class="absolute -right-2 -bottom-2 opacity-5 text-violet-500 group-hover:scale-110 transition">
-          <i data-lucide="line-chart" class="w-24 h-24"></i>
-        </div>
         <div class="flex justify-between items-start mb-2">
           <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Fondos</span>
           <span class="p-1.5 bg-violet-500/10 text-violet-400 rounded-lg"><i data-lucide="line-chart" class="w-4 h-4"></i></span>
@@ -119,37 +93,31 @@
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-emerald-500/50 transition duration-300">
-        <div class="absolute -right-2 -bottom-2 opacity-5 text-emerald-500 group-hover:scale-110 transition">
-          <i data-lucide="piggy-bank" class="w-24 h-24"></i>
-        </div>
         <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ahorro Líquido / Mes</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Ahorro Base / Mes</span>
           <span class="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg"><i data-lucide="piggy-bank" class="w-4 h-4"></i></span>
         </div>
         <div class="text-2xl font-bold text-emerald-400 mb-1" id="kpi-liquid-savings">0 €</div>
-        <p class="text-xs text-slate-400">Ingresos - Gastos segm. - Aportaciones</p>
+        <p class="text-xs text-slate-400">Ingresos - Gastos Fijos - Inversión</p>
       </div>
 
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-amber-500/50 transition duration-300">
-        <div class="absolute -right-2 -bottom-2 opacity-5 text-amber-500 group-hover:scale-110 transition">
-          <i data-lucide="arrow-up-right" class="w-24 h-24"></i>
-        </div>
         <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Inversión Total / Mes</span>
-          <span class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Patrimonio Total</span>
+          <span class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg"><i data-lucide="coins" class="w-4 h-4"></i></span>
         </div>
-        <div class="text-2xl font-bold text-amber-400 mb-1" id="kpi-monthly-transfer">0 €</div>
-        <p class="text-xs text-slate-400">Suma aportaciones a fondos</p>
+        <div class="text-2xl font-bold text-amber-400 mb-1" id="kpi-total-wealth">0 €</div>
+        <p class="text-xs text-slate-400">Cuenta Corriente + Fondos</p>
       </div>
     </div>
 
     <!-- Layout Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
-      <!-- Left Column: Forms (5 Cols) -->
+      <!-- Left Column: Settings & Forms (5 Cols) -->
       <div class="lg:col-span-5 space-y-6">
         
-        <!-- 1. Flujos Base y Cuenta Corriente -->
+        <!-- 1. Ingresos y Cuenta Corriente -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i>
@@ -160,32 +128,32 @@
             <div>
               <label class="block text-xs text-slate-400 mb-1">Ingresos Estimados / Mes</label>
               <div class="relative">
-                <input type="number" id="input-income" min="0" value="2500" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
+                <input type="number" id="input-income" min="0" value="2300" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
                 <span class="absolute left-2.5 top-2.5 text-xs text-slate-500">€</span>
               </div>
             </div>
             <div>
               <label class="block text-xs text-slate-400 mb-1">Cuenta Corriente (Inicial)</label>
               <div class="relative">
-                <input type="number" id="input-current-capital" min="0" value="5000" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
+                <input type="number" id="input-current-capital" min="0" value="12561" oninput="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
                 <span class="absolute left-2.5 top-2.5 text-xs text-slate-500">€</span>
               </div>
             </div>
           </div>
         </div>
 
-        <!-- 2. Gastos Mensuales Segmentados -->
+        <!-- 2. Gastos Mensuales Segmentados (Fijos) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
               <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>
-              <h2 class="font-semibold text-slate-100">Gastos Mensuales Segmentados</h2>
+              <h2 class="font-semibold text-slate-100">Gastos Mensuales Fijos</h2>
             </div>
             <span class="text-xs font-bold text-slate-300" id="total-segmented-expenses">Total: 0 €</span>
           </div>
 
           <div class="flex gap-2">
-            <input type="text" id="cat-name" placeholder="Ej. Alojamiento, Transporte..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500">
+            <input type="text" id="cat-name" placeholder="Ej. Casa, Coche..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500">
             <input type="number" id="cat-amount" min="0" placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500">
             <button type="button" onclick="addExpenseCategory()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1">
               <i data-lucide="plus" class="w-3.5 h-3.5"></i>
@@ -195,7 +163,7 @@
           <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 3. Gestión de Fondos de Inversión (Múltiples) -->
+        <!-- 3. Fondos de Inversión -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
@@ -210,16 +178,16 @@
           <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo / Producto</label>
-              <input type="text" id="fund-name" placeholder="Ej. Indexado MSCI World, PIAS..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+              <input type="text" id="fund-name" placeholder="Ej. SIALP, MSCI World..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
-                <input type="number" id="fund-initial" min="0" placeholder="5000" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+                <input type="number" id="fund-initial" min="0" placeholder="9015" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
               </div>
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
-                <input type="number" id="fund-monthly" min="0" placeholder="200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+                <input type="number" id="fund-monthly" min="0" placeholder="150" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
               </div>
             </div>
             <div class="flex justify-end gap-2 pt-1">
@@ -231,7 +199,7 @@
           <div id="funds-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 4. Gastos Extra / Puntuales -->
+        <!-- 4. Gastos Puntuales / Extra (Boda, Viajes, etc.) -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
@@ -246,7 +214,7 @@
           <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Concepto</label>
-              <input type="text" id="expense-name" placeholder="Ej. Seguro Coche, Matrícula" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+              <input type="text" id="expense-name" placeholder="Ej. Boda, Seguro Coche..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
             </div>
             <div class="grid grid-cols-2 gap-3">
               <div>
@@ -260,14 +228,14 @@
             </div>
             <div class="flex justify-end gap-2 pt-1">
               <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400 hover:text-white">Cancelar</button>
-              <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg transition">Guardar Gasto</button>
+              <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg transition">Guardar Gasto Extra</button>
             </div>
           </div>
 
           <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
         </div>
 
-        <!-- 5. Objetivos Creator Form -->
+        <!-- 5. Objetivos de Ahorro Form -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
             <i data-lucide="target" class="w-5 h-5 text-emerald-400"></i>
@@ -277,13 +245,13 @@
           <div class="space-y-3">
             <div>
               <label class="block text-xs text-slate-400 mb-1">Nombre del Objetivo</label>
-              <input type="text" id="goal-name" placeholder="Ej. Fondo de Emergencia, Viaje, Coche" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+              <input type="text" id="goal-name" placeholder="Ej. Fondo de Emergencia, Coche..." class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
             </div>
 
             <div class="grid grid-cols-2 gap-3">
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Importe Meta (€)</label>
-                <input type="number" id="goal-amount" min="1" placeholder="3000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+                <input type="number" id="goal-amount" min="1" placeholder="10000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
               </div>
               <div>
                 <label class="block text-xs text-slate-400 mb-1">Fecha Límite</label>
@@ -292,16 +260,11 @@
             </div>
 
             <div class="space-y-2 pt-2">
-              <span class="block text-xs font-semibold text-slate-300">Reglas de Financiación:</span>
+              <span class="block text-xs font-semibold text-slate-300">Bolsa para el Cálculo:</span>
               
               <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 p-2 rounded-lg bg-slate-950/40 border border-slate-800 hover:border-slate-700">
-                <input type="checkbox" id="goal-rule-funds" class="rounded border-slate-700 text-emerald-500 focus:ring-0 bg-slate-900">
-                <span>Permitir uso de <strong>Fondos de Inversión</strong></span>
-              </label>
-
-              <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 p-2 rounded-lg bg-slate-950/40 border border-slate-800 hover:border-slate-700">
-                <input type="checkbox" id="goal-rule-initial-capital" checked class="rounded border-slate-700 text-emerald-500 focus:ring-0 bg-slate-900">
-                <span>Usar <strong>Saldo Líquido Actual</strong> (Cuenta Corriente)</span>
+                <input type="checkbox" id="goal-rule-funds" checked class="rounded border-slate-700 text-emerald-500 focus:ring-0 bg-slate-900">
+                <span>Sumar <strong>Fondos de Inversión</strong> a la bolsa total</span>
               </label>
             </div>
 
@@ -313,11 +276,11 @@
 
       </div>
 
-      <!-- Right Column: Interactive Simulations & Graphs (7 Cols) -->
+      <!-- Right Column: Graphs, Monthly History & Goals (7 Cols) -->
       <div class="lg:col-span-7 space-y-6">
 
-        <!-- Live Simulator Control -->
-        <div class="bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl space-y-4 relative overflow-hidden">
+        <!-- Simulator Extra Savings -->
+        <div class="bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
               <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
@@ -340,6 +303,21 @@
           </div>
         </div>
 
+        <!-- Registro e Inspección por Meses -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar" class="w-5 h-5 text-emerald-400"></i>
+              <h2 class="font-semibold text-slate-100">Desglose Detallado por Mes</h2>
+            </div>
+            <input type="month" id="select-month-inspector" onchange="renderMonthDetails()" class="bg-slate-950 border border-slate-800 rounded-lg px-2.5 py-1 text-xs text-slate-200 focus:outline-none focus:border-emerald-500">
+          </div>
+
+          <div id="month-details-container" class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
+            <!-- Rendered by JS -->
+          </div>
+        </div>
+
         <!-- Proyección Visual Chart -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
@@ -353,7 +331,7 @@
           </div>
         </div>
 
-        <!-- List of Objectives -->
+        <!-- Objetivos de Ahorro y Progreso -->
         <div class="space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="font-semibold text-slate-100 flex items-center gap-2">
@@ -375,37 +353,26 @@
     // --- STATE MANAGEMENT ---
     const DEFAULT_STATE = {
       config: {
-        income: 2500,
-        currentCapital: 5000
+        income: 2300,
+        currentCapital: 12561
       },
-      expenseCategories: [
-        { id: '1', name: 'Alojamiento / Hipoteca / Alquiler', amount: 800 },
-        { id: '2', name: 'Alimentación y Supermercado', amount: 350 },
-        { id: '3', name: 'Transporte y Combustible', amount: 150 },
-        { id: '4', name: 'Ocio y Suministros', amount: 200 }
-      ],
-      funds: [
-        { id: '1', name: 'Fondo Indexado MSCI World', initialCapital: 8000, monthlyTransfer: 200 },
-        { id: '2', name: 'PIAS / Plan de Pensiones', initialCapital: 4000, monthlyTransfer: 100 }
-      ],
-      extraExpenses: [
-        { id: '1', name: 'Seguro Coche', amount: 450, date: '2026-10' }
-      ],
-      goals: [
-        { id: '1', name: 'Fondo de Emergencia 10k', amount: 10000, targetDate: '2027-06', useFunds: false, useInitialCapital: true },
-        { id: '2', name: 'Entrada Coche Nuevo', amount: 15000, targetDate: '2028-01', useFunds: true, useInitialCapital: true }
-      ]
+      expenseCategories: [],
+      funds: [],
+      extraExpenses: [],
+      goals: []
     };
 
     let state = JSON.parse(localStorage.getItem('planifica_data')) || DEFAULT_STATE;
     let extraSimulatedSavings = 0;
     let chartInstance = null;
 
-    // --- INIT ---
+    // --- INITIALIZATION ---
     document.addEventListener('DOMContentLoaded', () => {
       const now = new Date();
       const currentMonth = now.toISOString().slice(0, 7);
+      
       document.getElementById('expense-date').value = currentMonth;
+      document.getElementById('select-month-inspector').value = currentMonth;
       
       const future = new Date(now.setFullYear(now.getFullYear() + 1));
       document.getElementById('goal-target-date').value = future.toISOString().slice(0, 7);
@@ -426,7 +393,6 @@
     function updateConfig() {
       state.config.income = parseFloat(document.getElementById('input-income').value) || 0;
       state.config.currentCapital = parseFloat(document.getElementById('input-current-capital').value) || 0;
-      
       saveState();
       updateAll();
     }
@@ -437,7 +403,7 @@
       updateAll();
     }
 
-    // --- HELPER CALCULATIONS ---
+    // --- CALCULATIONS ---
     function getTotalExpenses() {
       return state.expenseCategories.reduce((sum, item) => sum + item.amount, 0);
     }
@@ -451,16 +417,14 @@
     }
 
     function getBaseLiquidSavings() {
-      const totalExpenses = getTotalExpenses();
-      const totalTransfers = getTotalInvestmentMonthly();
-      return Math.max(0, state.config.income - totalExpenses - totalTransfers);
+      return Math.max(0, state.config.income - getTotalExpenses() - getTotalInvestmentMonthly());
     }
 
     function getTotalMonthlySavings() {
       return getBaseLiquidSavings() + extraSimulatedSavings;
     }
 
-    // --- EXPENSE CATEGORIES ---
+    // --- CATEGORIES (GASTOS FIJOS) ---
     function addExpenseCategory() {
       const nameInput = document.getElementById('cat-name');
       const amountInput = document.getElementById('cat-amount');
@@ -469,7 +433,7 @@
       const amount = parseFloat(amountInput.value);
 
       if (!name || isNaN(amount)) {
-        alert("Por favor, introduce una categoría y un importe válido.");
+        alert("Introduce un concepto y un importe de gasto válido.");
         return;
       }
 
@@ -482,7 +446,7 @@
     }
 
     function deleteExpenseCategory(id) {
-      state.expenseCategories = state.expenseCategories.filter(cat => cat.id !== id);
+      state.expenseCategories = state.expenseCategories.filter(c => c.id !== id);
       saveState();
       updateAll();
     }
@@ -493,7 +457,7 @@
       document.getElementById('total-segmented-expenses').innerText = `Total: ${total.toLocaleString('es-ES')} €/mes`;
 
       if (state.expenseCategories.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay categorías definidas.</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay gastos fijos registrados.</p>`;
         return;
       }
 
@@ -510,10 +474,9 @@
       `).join('');
     }
 
-    // --- INVESTMENT FUNDS ---
+    // --- FONDOS DE INVERSIÓN ---
     function toggleFundForm() {
-      const form = document.getElementById('fund-form');
-      form.classList.toggle('hidden');
+      document.getElementById('fund-form').classList.toggle('hidden');
     }
 
     function addFund() {
@@ -530,14 +493,9 @@
         return;
       }
 
-      state.funds.push({
-        id: Date.now().toString(),
-        name,
-        initialCapital,
-        monthlyTransfer
-      });
-
+      state.funds.push({ id: Date.now().toString(), name, initialCapital, monthlyTransfer });
       saveState();
+
       nameInput.value = '';
       initialInput.value = '';
       monthlyInput.value = '';
@@ -569,17 +527,16 @@
             </button>
           </div>
           <div class="flex justify-between text-[11px] text-slate-400">
-            <span>Saldo: <strong class="text-slate-200">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
+            <span>Capital: <strong class="text-slate-200">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
             <span>Aportación: <strong class="text-amber-400">+${fund.monthlyTransfer.toLocaleString('es-ES')} €/mes</strong></span>
           </div>
         </div>
       `).join('');
     }
 
-    // --- EXTRA EXPENSES ---
+    // --- GASTOS EXTRA / PUNTUALES ---
     function toggleExtraExpenseForm() {
-      const form = document.getElementById('extra-expense-form');
-      form.classList.toggle('hidden');
+      document.getElementById('extra-expense-form').classList.toggle('hidden');
     }
 
     function addExtraExpense() {
@@ -592,13 +549,13 @@
       const date = dateInput.value;
 
       if (!name || isNaN(amount) || !date) {
-        alert("Rellena todos los campos del gasto puntual.");
+        alert("Completa todos los datos del gasto puntual.");
         return;
       }
 
       state.extraExpenses.push({ id: Date.now().toString(), name, amount, date });
       saveState();
-      
+
       nameInput.value = '';
       amountInput.value = '';
       toggleExtraExpenseForm();
@@ -606,15 +563,16 @@
     }
 
     function deleteExtraExpense(id) {
-      state.extraExpenses = state.extraExpenses.filter(item => item.id !== id);
+      state.extraExpenses = state.extraExpenses.filter(e => e.id !== id);
       saveState();
       updateAll();
     }
 
     function renderExtraExpenses() {
       const container = document.getElementById('extra-expenses-list');
+
       if (state.extraExpenses.length === 0) {
-        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay gastos puntuales programados.</p>`;
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay gastos puntuales registrados.</p>`;
         return;
       }
 
@@ -634,33 +592,62 @@
       `).join('');
     }
 
-    // --- GOALS MANAGEMENT ---
+    // --- INSPECTOR POR MESES ---
+    function renderMonthDetails() {
+      const monthSelected = document.getElementById('select-month-inspector').value;
+      const container = document.getElementById('month-details-container');
+
+      if (!monthSelected) return;
+
+      const income = state.config.income;
+      const fixedExpenses = getTotalExpenses();
+      const investmentTransfers = getTotalInvestmentMonthly();
+
+      const extraExpensesForMonth = state.extraExpenses
+        .filter(e => e.date === monthSelected)
+        .reduce((sum, e) => sum + e.amount, 0);
+
+      const netSavings = income - fixedExpenses - investmentTransfers - extraExpensesForMonth + extraSimulatedSavings;
+
+      container.innerHTML = `
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ingresos</span>
+          <span class="text-sm font-bold text-slate-200">${income.toLocaleString('es-ES')} €</span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Fijos</span>
+          <span class="text-sm font-bold text-rose-400">-${fixedExpenses.toLocaleString('es-ES')} €</span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Gastos Extra</span>
+          <span class="text-sm font-bold text-amber-400">-${extraExpensesForMonth.toLocaleString('es-ES')} €</span>
+        </div>
+        <div class="p-3 bg-slate-950 rounded-xl border border-slate-800">
+          <span class="block text-[10px] text-slate-400 uppercase font-semibold">Ahorro Neto Mes</span>
+          <span class="text-sm font-bold ${netSavings >= 0 ? 'text-emerald-400' : 'text-rose-500'}">${netSavings.toLocaleString('es-ES')} €</span>
+        </div>
+      `;
+    }
+
+    // --- OBJETIVOS Y ESTIMACIONES ---
     function addGoal() {
       const nameInput = document.getElementById('goal-name');
       const amountInput = document.getElementById('goal-amount');
-      const targetDateInput = document.getElementById('goal-target-date');
+      const dateInput = document.getElementById('goal-target-date');
+      const useFunds = document.getElementById('goal-rule-funds').checked;
 
       const name = nameInput.value.trim();
       const amount = parseFloat(amountInput.value);
-      const targetDate = targetDateInput.value;
-      const useFunds = document.getElementById('goal-rule-funds').checked;
-      const useInitialCapital = document.getElementById('goal-rule-initial-capital').checked;
+      const targetDate = dateInput.value;
 
       if (!name || isNaN(amount) || !targetDate) {
-        alert("Completa todos los datos obligatorios del objetivo.");
+        alert("Completa todos los campos del objetivo.");
         return;
       }
 
-      state.goals.push({
-        id: Date.now().toString(),
-        name,
-        amount,
-        targetDate,
-        useFunds,
-        useInitialCapital
-      });
-
+      state.goals.push({ id: Date.now().toString(), name, amount, targetDate, useFunds });
       saveState();
+
       nameInput.value = '';
       amountInput.value = '';
       updateAll();
@@ -673,23 +660,19 @@
     }
 
     function calculateGoalProjection(goal) {
-      const totalInvestmentCap = getTotalInvestmentInitial();
-      const totalInvestmentTransfer = getTotalInvestmentMonthly();
+      const currentWealth = state.config.currentCapital + (goal.useFunds ? getTotalInvestmentInitial() : 0);
+      const percentage = Math.min(100, Math.round((currentWealth / goal.amount) * 100));
 
-      const startCapital = (goal.useInitialCapital ? state.config.currentCapital : 0) + 
-                           (goal.useFunds ? totalInvestmentCap : 0);
-      
-      if (startCapital >= goal.amount) {
+      if (currentWealth >= goal.amount) {
         return {
           monthsNeeded: 0,
-          estimatedDateStr: 'Completado',
+          estimatedDateStr: '¡Conseguido!',
           isOnTrack: true,
-          percentage: 100,
-          monthsDifference: 0
+          percentage: 100
         };
       }
 
-      let needed = goal.amount - startCapital;
+      let needed = goal.amount - currentWealth;
       let months = 0;
       let currentDate = new Date();
       let accumulated = 0;
@@ -700,9 +683,8 @@
         const monthKey = currentDate.toISOString().slice(0, 7);
 
         let monthlySavings = getTotalMonthlySavings();
-
         if (goal.useFunds) {
-          monthlySavings += totalInvestmentTransfer;
+          monthlySavings += getTotalInvestmentMonthly();
         }
 
         const extraForMonth = state.extraExpenses
@@ -717,20 +699,15 @@
       const now = new Date();
       const targetMonths = (targetDateObj.getFullYear() - now.getFullYear()) * 12 + (targetDateObj.getMonth() - now.getMonth());
 
-      const percentage = Math.min(100, Math.round((startCapital / goal.amount) * 100));
       const estDate = new Date();
       estDate.setMonth(estDate.getMonth() + months);
-      
-      const options = { year: 'numeric', month: 'short' };
-      const estimatedDateStr = estDate.toLocaleDateString('es-ES', options);
+      const estimatedDateStr = estDate.toLocaleDateString('es-ES', { year: 'numeric', month: 'short' });
 
       return {
         monthsNeeded: months,
         estimatedDateStr,
-        targetMonths,
         isOnTrack: months <= targetMonths,
-        percentage,
-        monthsDifference: targetMonths - months
+        percentage
       };
     }
 
@@ -739,19 +716,18 @@
       document.getElementById('goals-count').innerText = `${state.goals.length} Objetivo(s)`;
 
       if (state.goals.length === 0) {
-        container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-500">No hay objetivos configurados. ¡Añade uno arriba!</div>`;
+        container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-500">No hay objetivos activos.</div>`;
         return;
       }
 
       container.innerHTML = state.goals.map(goal => {
         const proj = calculateGoalProjection(goal);
-        
         const statusBadge = proj.isOnTrack 
           ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">A tiempo</span>`
-          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Con retraso</span>`;
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Revisar plazo</span>`;
 
         return `
-          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3 relative group">
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3">
             <div class="flex justify-between items-start">
               <div>
                 <div class="flex items-center gap-2">
@@ -765,18 +741,9 @@
               </button>
             </div>
 
-            <div class="flex flex-wrap gap-1.5 text-[10px]">
-              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                ${goal.useInitialCapital ? '✓ Saldo Inicial' : '✗ Sin Saldo Inicial'}
-              </span>
-              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
-                ${goal.useFunds ? '✓ Incluye Fondos' : 'Solo Líquido'}
-              </span>
-            </div>
-
             <div class="space-y-1">
               <div class="flex justify-between text-xs text-slate-400">
-                <span>Progreso inicial/cobertura</span>
+                <span>Progreso sobre Bolsa Total</span>
                 <span class="font-semibold text-emerald-400">${proj.percentage}%</span>
               </div>
               <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
@@ -787,11 +754,11 @@
             <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60 text-xs">
               <div>
                 <span class="text-slate-500 block text-[10px]">Estimación de logro:</span>
-                <span class="font-bold text-slate-200">${proj.estimatedDateStr}</span> 
-                <span class="text-[10px] text-slate-400">(${proj.monthsNeeded} meses)</span>
+                <span class="font-bold text-slate-200">${proj.estimatedDateStr}</span>
+                <span class="text-[10px] text-slate-400">(${proj.monthsNeeded} m)</span>
               </div>
               <div>
-                <span class="text-slate-500 block text-[10px]">Fecha deseada:</span>
+                <span class="text-slate-500 block text-[10px]">Fecha límite:</span>
                 <span class="font-medium text-slate-300">${goal.targetDate}</span>
               </div>
             </div>
@@ -800,10 +767,9 @@
       }).join('');
     }
 
-    // --- CHART ENGINE ---
+    // --- GRÁFICO ---
     function updateChart() {
       const ctx = document.getElementById('projectionChart').getContext('2d');
-      
       const labels = [];
       const liquidData = [];
       const investmentData = [];
@@ -856,7 +822,7 @@
               tension: 0.3
             },
             {
-              label: 'Total Fondos Inversión (€)',
+              label: 'Fondos de Inversión (€)',
               data: investmentData,
               borderColor: '#8b5cf6',
               backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -869,55 +835,45 @@
           responsive: true,
           maintainAspectRatio: false,
           plugins: {
-            legend: {
-              labels: { color: '#94a3b8', font: { size: 11 } }
-            },
-            tooltip: {
-              mode: 'index',
-              intersect: false
-            }
+            legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+            tooltip: { mode: 'index', intersect: false }
           },
           scales: {
-            x: {
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { color: '#64748b', font: { size: 10 } }
-            },
-            y: {
-              grid: { color: 'rgba(51, 65, 85, 0.3)' },
-              ticks: { color: '#64748b', font: { size: 10 } }
-            }
+            x: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+            y: { grid: { color: 'rgba(51, 65, 85, 0.3)' }, ticks: { color: '#64748b', font: { size: 10 } } }
           }
         }
       });
     }
 
-    // --- MAIN RENDER LOOP ---
+    // --- MAIN RENDER ---
     function updateAll() {
+      const currentWealth = state.config.currentCapital + getTotalInvestmentInitial();
+
       document.getElementById('kpi-current-balance').innerText = `${state.config.currentCapital.toLocaleString('es-ES')} €`;
       document.getElementById('kpi-investment-balance').innerText = `${getTotalInvestmentInitial().toLocaleString('es-ES')} €`;
-      
-      const liquidSavings = getBaseLiquidSavings();
-      document.getElementById('kpi-liquid-savings').innerText = `${liquidSavings.toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-monthly-transfer').innerText = `${getTotalInvestmentMonthly().toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-liquid-savings').innerText = `${getBaseLiquidSavings().toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-total-wealth').innerText = `${currentWealth.toLocaleString('es-ES')} €`;
 
       renderExpenseCategories();
       renderFunds();
       renderExtraExpenses();
+      renderMonthDetails();
       renderGoals();
       updateChart();
 
       lucide.createIcons();
     }
 
-    // --- DATA PORTABILITY ---
+    // --- IMPORT / EXPORT / RESET ---
     function exportData() {
       const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
-      const downloadAnchor = document.createElement('a');
-      downloadAnchor.setAttribute("href", dataStr);
-      downloadAnchor.setAttribute("download", `planifica_backup_${new Date().toISOString().slice(0,10)}.json`);
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      downloadAnchor.remove();
+      const anchor = document.createElement('a');
+      anchor.setAttribute("href", dataStr);
+      anchor.setAttribute("download", `planifica_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(anchor);
+      anchor.click();
+      anchor.remove();
     }
 
     function importData(event) {
@@ -925,22 +881,22 @@
       reader.onload = function(e) {
         try {
           const imported = JSON.parse(e.target.result);
-          if (imported.config && imported.goals) {
+          if (imported.config) {
             state = imported;
             saveState();
             syncInputsFromState();
             updateAll();
-            alert('¡Datos importados con éxito!');
+            alert('¡Datos cargados correctamente!');
           }
         } catch(err) {
-          alert('Error al importar el archivo JSON.');
+          alert('El archivo no es válido.');
         }
       };
       reader.readAsText(event.target.files[0]);
     }
 
     function resetData() {
-      if (confirm('¿Estás seguro de reiniciar todos los datos a la configuración inicial?')) {
+      if (confirm('¿Quieres borrar todos los datos guardados?')) {
         state = JSON.parse(JSON.stringify(DEFAULT_STATE));
         saveState();
         syncInputsFromState();
