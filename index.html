@@ -198,4 +198,738 @@
 
           <div id="fund-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
             <div>
-              <label class="block text-xs text-slate-400
+              <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo / Producto</label>
+              <input type="text" id="fund-name" placeholder="Ej. Indexado MSCI World, PIAS..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
+                <input type="number" id="fund-initial" min="0" placeholder="5000" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
+                <input type="number" id="fund-monthly" min="0" placeholder="200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button type="button" onclick="toggleFundForm()" class="px-3 py-1 text-xs text-slate-400 hover:text-white">Cancelar</button>
+              <button type="button" onclick="addFund()" class="px-3 py-1 text-xs bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg transition">Guardar Fondo</button>
+            </div>
+          </div>
+
+          <div id="funds-list" class="space-y-2 max-h-52 overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="calendar-off" class="w-5 h-5 text-amber-400"></i>
+              <h2 class="font-semibold text-slate-100">Gastos Puntuales / Extra</h2>
+            </div>
+            <button type="button" onclick="toggleExtraExpenseForm()" class="text-xs bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 px-2.5 py-1 rounded-lg transition font-medium flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Añadir
+            </button>
+          </div>
+
+          <div id="extra-expense-form" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Concepto</label>
+              <input type="text" id="expense-name" placeholder="Ej. Seguro Coche, Matrícula" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Importe (€)</label>
+                <input type="number" id="expense-amount" min="1" placeholder="500" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-amber-500">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Mes Afección</label>
+                <input type="month" id="expense-date" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-amber-500 text-slate-300">
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button type="button" onclick="toggleExtraExpenseForm()" class="px-3 py-1 text-xs text-slate-400 hover:text-white">Cancelar</button>
+              <button type="button" onclick="addExtraExpense()" class="px-3 py-1 text-xs bg-amber-500 hover:bg-amber-600 text-slate-950 font-semibold rounded-lg transition">Guardar Gasto</button>
+            </div>
+          </div>
+
+          <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto pr-1"></div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
+            <i data-lucide="target" class="w-5 h-5 text-emerald-400"></i>
+            <h2 class="font-semibold text-slate-100">Nuevo Objetivo de Ahorro</h2>
+          </div>
+
+          <div class="space-y-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Nombre del Objetivo</label>
+              <input type="text" id="goal-name" placeholder="Ej. Fondo de Emergencia, Viaje, Coche" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Importe Meta (€)</label>
+                <input type="number" id="goal-amount" min="1" placeholder="3000" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-emerald-500">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Fecha Límite</label>
+                <input type="month" id="goal-target-date" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-2 py-2 text-sm focus:outline-none focus:border-emerald-500 text-slate-300">
+              </div>
+            </div>
+
+            <div class="space-y-2 pt-2">
+              <span class="block text-xs font-semibold text-slate-300">Reglas de Financiación:</span>
+              
+              <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 p-2 rounded-lg bg-slate-950/40 border border-slate-800 hover:border-slate-700">
+                <input type="checkbox" id="goal-rule-funds" class="rounded border-slate-700 text-emerald-500 focus:ring-0 bg-slate-900">
+                <span>Permitir uso de <strong>Fondos de Inversión</strong></span>
+              </label>
+
+              <label class="flex items-center gap-2 cursor-pointer text-xs text-slate-300 p-2 rounded-lg bg-slate-950/40 border border-slate-800 hover:border-slate-700">
+                <input type="checkbox" id="goal-rule-initial-capital" checked class="rounded border-slate-700 text-emerald-500 focus:ring-0 bg-slate-900">
+                <span>Usar <strong>Saldo Líquido Actual</strong> (Cuenta Corriente)</span>
+              </label>
+            </div>
+
+            <button type="button" onclick="addGoal()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-semibold rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/10">
+              <i data-lucide="plus-circle" class="w-4 h-4"></i> Crear Objetivo
+            </button>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="lg:col-span-7 space-y-6">
+
+        <div class="bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl space-y-4 relative overflow-hidden">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <i data-lucide="zap" class="w-5 h-5 text-indigo-400"></i>
+              <h2 class="font-semibold text-slate-100">Simulador Dinámico de Esfuerzo</h2>
+            </div>
+            <span class="text-xs px-2.5 py-1 bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 rounded-full font-medium">Ajuste en vivo</span>
+          </div>
+
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm">
+              <span class="text-slate-300">Ahorro Mensual Extra Simulado:</span>
+              <span id="simulator-extra-val" class="font-bold text-indigo-400">+0 €/mes</span>
+            </div>
+            <input type="range" id="simulator-slider" min="0" max="1000" step="25" value="0" oninput="updateSimulation()" class="w-full h-2 bg-slate-800 rounded-lg appearance-none cursor-pointer accent-indigo-500">
+            <div class="flex justify-between text-[10px] text-slate-500">
+              <span>0 €</span>
+              <span>+500 €</span>
+              <span>+1000 €/mes</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="line-chart" class="w-5 h-5 text-indigo-400"></i>
+              <h2 class="font-semibold text-slate-100">Proyección Patrimonial (24 Meses)</h2>
+            </div>
+          </div>
+          <div class="h-64 relative">
+            <canvas id="projectionChart"></canvas>
+          </div>
+        </div>
+
+        <div class="space-y-4">
+          <div class="flex items-center justify-between">
+            <h2 class="font-semibold text-slate-100 flex items-center gap-2">
+              <i data-lucide="flag" class="w-5 h-5 text-indigo-400"></i> Objetivos y Estimaciones
+            </h2>
+            <span id="goals-count" class="text-xs text-slate-400">0 Objetivos activos</span>
+          </div>
+
+          <div id="goals-list" class="space-y-4"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </main>
+
+  <script>
+    // --- STATE MANAGEMENT ---
+    const DEFAULT_STATE = {
+      config: {
+        income: 2500,
+        currentCapital: 5000
+      },
+      expenseCategories: [
+        { id: '1', name: 'Alojamiento / Hipoteca / Alquiler', amount: 800 },
+        { id: '2', name: 'Alimentación y Supermercado', amount: 350 },
+        { id: '3', name: 'Transporte y Combustible', amount: 150 },
+        { id: '4', name: 'Ocio y Suministros', amount: 200 }
+      ],
+      funds: [
+        { id: '1', name: 'Fondo Indexado MSCI World', initialCapital: 8000, monthlyTransfer: 200 },
+        { id: '2', name: 'PIAS / Plan de Pensiones', initialCapital: 4000, monthlyTransfer: 100 }
+      ],
+      extraExpenses: [
+        { id: '1', name: 'Seguro Coche', amount: 450, date: '2026-10' }
+      ],
+      goals: [
+        { id: '1', name: 'Fondo de Emergencia 10k', amount: 10000, targetDate: '2027-06', useFunds: false, useInitialCapital: true },
+        { id: '2', name: 'Entrada Coche Nuevo', amount: 15000, targetDate: '2028-01', useFunds: true, useInitialCapital: true }
+      ]
+    };
+
+    let state = JSON.parse(localStorage.getItem('planifica_data')) || DEFAULT_STATE;
+    let extraSimulatedSavings = 0;
+    let chartInstance = null;
+
+    // --- INIT ---
+    document.addEventListener('DOMContentLoaded', () => {
+      const now = new Date();
+      const currentMonth = now.toISOString().slice(0, 7);
+      document.getElementById('expense-date').value = currentMonth;
+      
+      const future = new Date(now.setFullYear(now.getFullYear() + 1));
+      document.getElementById('goal-target-date').value = future.toISOString().slice(0, 7);
+
+      syncInputsFromState();
+      updateAll();
+    });
+
+    function saveState() {
+      localStorage.setItem('planifica_data', JSON.stringify(state));
+    }
+
+    function syncInputsFromState() {
+      document.getElementById('input-income').value = state.config.income;
+      document.getElementById('input-current-capital').value = state.config.currentCapital;
+    }
+
+    function updateConfig() {
+      state.config.income = parseFloat(document.getElementById('input-income').value) || 0;
+      state.config.currentCapital = parseFloat(document.getElementById('input-current-capital').value) || 0;
+      
+      saveState();
+      updateAll();
+    }
+
+    function updateSimulation() {
+      extraSimulatedSavings = parseFloat(document.getElementById('simulator-slider').value) || 0;
+      document.getElementById('simulator-extra-val').innerText = `+${extraSimulatedSavings} €/mes`;
+      updateAll();
+    }
+
+    // --- HELPER CALCULATIONS ---
+    function getTotalExpenses() {
+      return state.expenseCategories.reduce((sum, item) => sum + item.amount, 0);
+    }
+
+    function getTotalInvestmentInitial() {
+      return state.funds.reduce((sum, fund) => sum + fund.initialCapital, 0);
+    }
+
+    function getTotalInvestmentMonthly() {
+      return state.funds.reduce((sum, fund) => sum + fund.monthlyTransfer, 0);
+    }
+
+    function getBaseLiquidSavings() {
+      const totalExpenses = getTotalExpenses();
+      const totalTransfers = getTotalInvestmentMonthly();
+      return Math.max(0, state.config.income - totalExpenses - totalTransfers);
+    }
+
+    function getTotalMonthlySavings() {
+      return getBaseLiquidSavings() + extraSimulatedSavings;
+    }
+
+    // --- EXPENSE CATEGORIES ---
+    function addExpenseCategory() {
+      const nameInput = document.getElementById('cat-name');
+      const amountInput = document.getElementById('cat-amount');
+
+      const name = nameInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+
+      if (!name || isNaN(amount)) {
+        alert("Por favor, introduce una categoría y un importe válido.");
+        return;
+      }
+
+      state.expenseCategories.push({ id: Date.now().toString(), name, amount });
+      saveState();
+
+      nameInput.value = '';
+      amountInput.value = '';
+      updateAll();
+    }
+
+    function deleteExpenseCategory(id) {
+      state.expenseCategories = state.expenseCategories.filter(cat => cat.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderExpenseCategories() {
+      const container = document.getElementById('expense-categories-list');
+      const total = getTotalExpenses();
+      document.getElementById('total-segmented-expenses').innerText = `Total: ${total.toLocaleString('es-ES')} €/mes`;
+
+      if (state.expenseCategories.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay categorías definidas.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.expenseCategories.map(cat => `
+        <div class="flex items-center justify-between p-2 bg-slate-950/60 rounded-xl border border-slate-800 text-xs">
+          <span class="font-medium text-slate-300 truncate pr-2">${cat.name}</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-200">${cat.amount.toLocaleString('es-ES')} €</span>
+            <button type="button" onclick="deleteExpenseCategory('${cat.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- INVESTMENT FUNDS ---
+    function toggleFundForm() {
+      const form = document.getElementById('fund-form');
+      form.classList.toggle('hidden');
+    }
+
+    function addFund() {
+      const nameInput = document.getElementById('fund-name');
+      const initialInput = document.getElementById('fund-initial');
+      const monthlyInput = document.getElementById('fund-monthly');
+
+      const name = nameInput.value.trim();
+      const initialCapital = parseFloat(initialInput.value) || 0;
+      const monthlyTransfer = parseFloat(monthlyInput.value) || 0;
+
+      if (!name) {
+        alert("Introduce un nombre para el fondo.");
+        return;
+      }
+
+      state.funds.push({
+        id: Date.now().toString(),
+        name,
+        initialCapital,
+        monthlyTransfer
+      });
+
+      saveState();
+      nameInput.value = '';
+      initialInput.value = '';
+      monthlyInput.value = '';
+      toggleFundForm();
+      updateAll();
+    }
+
+    function deleteFund(id) {
+      state.funds = state.funds.filter(f => f.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderFunds() {
+      const container = document.getElementById('funds-list');
+      document.getElementById('kpi-funds-count').innerText = `${state.funds.length} fondo(s) configurado(s)`;
+
+      if (state.funds.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay fondos creados.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.funds.map(fund => `
+        <div class="p-2.5 bg-slate-950/60 rounded-xl border border-slate-800 text-xs space-y-1">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-violet-300">${fund.name}</span>
+            <button type="button" onclick="deleteFund('${fund.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400">
+            <span>Saldo: <strong class="text-slate-200">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
+            <span>Aportación: <strong class="text-amber-400">+${fund.monthlyTransfer.toLocaleString('es-ES')} €/mes</strong></span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- EXTRA EXPENSES ---
+    function toggleExtraExpenseForm() {
+      const form = document.getElementById('extra-expense-form');
+      form.classList.toggle('hidden');
+    }
+
+    function addExtraExpense() {
+      const nameInput = document.getElementById('expense-name');
+      const amountInput = document.getElementById('expense-amount');
+      const dateInput = document.getElementById('expense-date');
+
+      const name = nameInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const date = dateInput.value;
+
+      if (!name || isNaN(amount) || !date) {
+        alert("Rellena todos los campos del gasto puntual.");
+        return;
+      }
+
+      state.extraExpenses.push({ id: Date.now().toString(), name, amount, date });
+      saveState();
+      
+      nameInput.value = '';
+      amountInput.value = '';
+      toggleExtraExpenseForm();
+      updateAll();
+    }
+
+    function deleteExtraExpense(id) {
+      state.extraExpenses = state.extraExpenses.filter(item => item.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderExtraExpenses() {
+      const container = document.getElementById('extra-expenses-list');
+      if (state.extraExpenses.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay gastos puntuales programados.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.extraExpenses.map(item => `
+        <div class="flex items-center justify-between p-2 bg-slate-950/60 rounded-xl border border-slate-800 text-xs">
+          <div>
+            <span class="font-medium text-slate-200">${item.name}</span>
+            <div class="text-[10px] text-slate-500">${item.date}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-amber-400">-${item.amount.toLocaleString('es-ES')} €</span>
+            <button type="button" onclick="deleteExtraExpense('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- GOALS MANAGEMENT ---
+    function addGoal() {
+      const nameInput = document.getElementById('goal-name');
+      const amountInput = document.getElementById('goal-amount');
+      const targetDateInput = document.getElementById('goal-target-date');
+
+      const name = nameInput.value.trim();
+      const amount = parseFloat(amountInput.value);
+      const targetDate = targetDateInput.value;
+      const useFunds = document.getElementById('goal-rule-funds').checked;
+      const useInitialCapital = document.getElementById('goal-rule-initial-capital').checked;
+
+      if (!name || isNaN(amount) || !targetDate) {
+        alert("Completa todos los datos obligatorios del objetivo.");
+        return;
+      }
+
+      state.goals.push({
+        id: Date.now().toString(),
+        name,
+        amount,
+        targetDate,
+        useFunds,
+        useInitialCapital
+      });
+
+      saveState();
+      nameInput.value = '';
+      amountInput.value = '';
+      updateAll();
+    }
+
+    function deleteGoal(id) {
+      state.goals = state.goals.filter(g => g.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function calculateGoalProjection(goal) {
+      const totalInvestmentCap = getTotalInvestmentInitial();
+      const totalInvestmentTransfer = getTotalInvestmentMonthly();
+
+      const startCapital = (goal.useInitialCapital ? state.config.currentCapital : 0) + 
+                           (goal.useFunds ? totalInvestmentCap : 0);
+      
+      if (startCapital >= goal.amount) {
+        return {
+          monthsNeeded: 0,
+          estimatedDateStr: 'Completado',
+          isOnTrack: true,
+          percentage: 100,
+          monthsDifference: 0
+        };
+      }
+
+      let needed = goal.amount - startCapital;
+      let months = 0;
+      let currentDate = new Date();
+      let accumulated = 0;
+
+      while (accumulated < needed && months < 360) {
+        months++;
+        currentDate.setMonth(currentDate.getMonth() + 1);
+        const monthKey = currentDate.toISOString().slice(0, 7);
+
+        let monthlySavings = getTotalMonthlySavings();
+
+        if (goal.useFunds) {
+          monthlySavings += totalInvestmentTransfer;
+        }
+
+        const extraForMonth = state.extraExpenses
+          .filter(e => e.date === monthKey)
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        monthlySavings -= extraForMonth;
+        accumulated += Math.max(0, monthlySavings);
+      }
+
+      const targetDateObj = new Date(goal.targetDate + '-01');
+      const now = new Date();
+      const targetMonths = (targetDateObj.getFullYear() - now.getFullYear()) * 12 + (targetDateObj.getMonth() - now.getMonth());
+
+      const percentage = Math.min(100, Math.round((startCapital / goal.amount) * 100));
+      const estDate = new Date();
+      estDate.setMonth(estDate.getMonth() + months);
+      
+      const options = { year: 'numeric', month: 'short' };
+      const estimatedDateStr = estDate.toLocaleDateString('es-ES', options);
+
+      return {
+        monthsNeeded: months,
+        estimatedDateStr,
+        targetMonths,
+        isOnTrack: months <= targetMonths,
+        percentage,
+        monthsDifference: targetMonths - months
+      };
+    }
+
+    function renderGoals() {
+      const container = document.getElementById('goals-list');
+      document.getElementById('goals-count').innerText = `${state.goals.length} Objetivo(s)`;
+
+      if (state.goals.length === 0) {
+        container.innerHTML = `<div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center text-xs text-slate-500">No hay objetivos configurados. ¡Añade uno arriba!</div>`;
+        return;
+      }
+
+      container.innerHTML = state.goals.map(goal => {
+        const proj = calculateGoalProjection(goal);
+        
+        const statusBadge = proj.isOnTrack 
+          ? `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">A tiempo</span>`
+          : `<span class="px-2 py-0.5 rounded-full text-[10px] font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">Con retraso</span>`;
+
+        return `
+          <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl space-y-3 relative group">
+            <div class="flex justify-between items-start">
+              <div>
+                <div class="flex items-center gap-2">
+                  <h3 class="font-bold text-slate-100 text-base">${goal.name}</h3>
+                  ${statusBadge}
+                </div>
+                <div class="text-xs text-slate-400 mt-0.5">Meta: <span class="text-white font-medium">${goal.amount.toLocaleString('es-ES')} €</span></div>
+              </div>
+              <button type="button" onclick="deleteGoal('${goal.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+                <i data-lucide="trash-2" class="w-4 h-4"></i>
+              </button>
+            </div>
+
+            <div class="flex flex-wrap gap-1.5 text-[10px]">
+              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                ${goal.useInitialCapital ? '✓ Saldo Inicial' : '✗ Sin Saldo Inicial'}
+              </span>
+              <span class="px-2 py-0.5 rounded bg-slate-950 border border-slate-800 text-slate-400">
+                ${goal.useFunds ? '✓ Incluye Fondos' : 'Solo Líquido'}
+              </span>
+            </div>
+
+            <div class="space-y-1">
+              <div class="flex justify-between text-xs text-slate-400">
+                <span>Progreso inicial/cobertura</span>
+                <span class="font-semibold text-emerald-400">${proj.percentage}%</span>
+              </div>
+              <div class="w-full bg-slate-950 h-2 rounded-full overflow-hidden border border-slate-800">
+                <div class="bg-gradient-to-r from-emerald-500 to-indigo-500 h-full rounded-full transition-all duration-500" style="width: ${proj.percentage}%"></div>
+              </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800/60 text-xs">
+              <div>
+                <span class="text-slate-500 block text-[10px]">Estimación de logro:</span>
+                <span class="font-bold text-slate-200">${proj.estimatedDateStr}</span> 
+                <span class="text-[10px] text-slate-400">(${proj.monthsNeeded} meses)</span>
+              </div>
+              <div>
+                <span class="text-slate-500 block text-[10px]">Fecha deseada:</span>
+                <span class="font-medium text-slate-300">${goal.targetDate}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // --- CHART ENGINE ---
+    function updateChart() {
+      const ctx = document.getElementById('projectionChart').getContext('2d');
+      
+      const labels = [];
+      const liquidData = [];
+      const investmentData = [];
+      
+      let currentLiquid = state.config.currentCapital;
+      let currentInvestment = getTotalInvestmentInitial();
+      const monthlyInvestmentTransfer = getTotalInvestmentMonthly();
+      
+      const now = new Date();
+
+      for (let i = 0; i < 24; i++) {
+        const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
+        const monthKey = d.toISOString().slice(0, 7);
+        const monthLabel = d.toLocaleDateString('es-ES', { month: 'short', year: '2-digit' });
+        
+        labels.push(monthLabel);
+
+        if (i > 0) {
+          let liquidNet = getTotalMonthlySavings();
+          
+          const extraForMonth = state.extraExpenses
+            .filter(e => e.date === monthKey)
+            .reduce((sum, e) => sum + e.amount, 0);
+
+          liquidNet -= extraForMonth;
+
+          currentLiquid += liquidNet;
+          currentInvestment += monthlyInvestmentTransfer;
+        }
+
+        liquidData.push(Math.round(currentLiquid));
+        investmentData.push(Math.round(currentInvestment));
+      }
+
+      if (chartInstance) {
+        chartInstance.destroy();
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [
+            {
+              label: 'Cuenta Corriente (€)',
+              data: liquidData,
+              borderColor: '#10b981',
+              backgroundColor: 'rgba(16, 185, 129, 0.1)',
+              fill: true,
+              tension: 0.3
+            },
+            {
+              label: 'Total Fondos Inversión (€)',
+              data: investmentData,
+              borderColor: '#8b5cf6',
+              backgroundColor: 'rgba(139, 92, 246, 0.1)',
+              fill: true,
+              tension: 0.3
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              labels: { color: '#94a3b8', font: { size: 11 } }
+            },
+            tooltip: {
+              mode: 'index',
+              intersect: false
+            }
+          },
+          scales: {
+            x: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#64748b', font: { size: 10 } }
+            },
+            y: {
+              grid: { color: 'rgba(51, 65, 85, 0.3)' },
+              ticks: { color: '#64748b', font: { size: 10 } }
+            }
+          }
+        }
+      });
+    }
+
+    // --- MAIN RENDER LOOP ---
+    function updateAll() {
+      document.getElementById('kpi-current-balance').innerText = `${state.config.currentCapital.toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-investment-balance').innerText = `${getTotalInvestmentInitial().toLocaleString('es-ES')} €`;
+      
+      const liquidSavings = getBaseLiquidSavings();
+      document.getElementById('kpi-liquid-savings').innerText = `${liquidSavings.toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-monthly-transfer').innerText = `${getTotalInvestmentMonthly().toLocaleString('es-ES')} €`;
+
+      renderExpenseCategories();
+      renderFunds();
+      renderExtraExpenses();
+      renderGoals();
+      updateChart();
+
+      lucide.createIcons();
+    }
+
+    // --- DATA PORTABILITY ---
+    function exportData() {
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(state, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute("href", dataStr);
+      downloadAnchor.setAttribute("download", `planifica_backup_${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    }
+
+    function importData(event) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const imported = JSON.parse(e.target.result);
+          if (imported.config && imported.goals) {
+            state = imported;
+            saveState();
+            syncInputsFromState();
+            updateAll();
+            alert('¡Datos importados con éxito!');
+          }
+        } catch(err) {
+          alert('Error al importar el archivo JSON.');
+        }
+      };
+      reader.readAsText(event.target.files[0]);
+    }
+
+    function resetData() {
+      if (confirm('¿Estás seguro de reiniciar todos los datos a la configuración inicial?')) {
+        state = JSON.parse(JSON.stringify(DEFAULT_STATE));
+        saveState();
+        syncInputsFromState();
+        updateAll();
+      }
+    }
+  </script>
+</body>
+</html>
