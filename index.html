@@ -196,6 +196,26 @@
           <option value="Baja">🟢 Baja (3º en recibir ahorro)</option>
         </select>
       </div>
+      <div>
+        <label class="text-xs text-slate-400">Fecha Estimada Conseguir</label>
+        <div class="grid grid-cols-2 gap-2 mt-1">
+          <select id="obj-mes-destino" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio" selected>Junio</option>
+            <option value="Julio">Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+          <input type="number" id="obj-anio-destino" placeholder="2027" value="2027" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+        </div>
+      </div>
       <div class="space-y-2 text-xs border-t border-slate-700 pt-2">
         <label class="flex items-center space-x-2 text-slate-300">
           <input type="checkbox" id="obj-usar-futuros" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
@@ -327,13 +347,13 @@
         { id: 1, nombre: "Fondo Indexado Global", monto: 8000 }
       ],
       objetivos: [
-        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, prioridad: "Alta", usarFuturos: true, usarFondos: true, usarCorriente: true },
-        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFuturos: true, usarFondos: false, usarCorriente: false }
+        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, prioridad: "Alta", usarFuturos: true, usarFondos: true, usarCorriente: true, mesDestino: "Junio", anioDestino: 2027 },
+        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFuturos: true, usarFondos: false, usarCorriente: false, mesDestino: "Diciembre", anioDestino: 2026 }
       ]
     };
 
     function inicializar() {
-      const guardado = localStorage.getItem('planifica_data_v6');
+      const guardado = localStorage.getItem('planifica_data_v7');
       if (guardado) {
         try { estado = JSON.parse(guardado); } catch(e) {}
       }
@@ -389,7 +409,7 @@
       renderizarObjetivosCascada();
       actualizarSimulacion();
 
-      localStorage.setItem('planifica_data_v6', JSON.stringify(estado));
+      localStorage.setItem('planifica_data_v7', JSON.stringify(estado));
     }
 
     function renderizarGastos() {
@@ -450,7 +470,7 @@
       });
     }
 
-    // --- CÁLCULO CASCADA CON FONDO EMERGENCIA E INGRESOS FUTUROS ---
+    // --- CÁLCULO CASCADA CON FECHA ESTIMADA Y RESTRICCIONES ---
     function renderizarObjetivosCascada() {
       const cont = document.getElementById('contenedor-objetivos');
       cont.innerHTML = '';
@@ -504,12 +524,15 @@
         else if (!usarAhorroMensual) textoTiempo = "Solo saldo inicial";
         else if (mesesNecesarios === Infinity) textoTiempo = "Sin ahorro asignado";
 
+        const textoFechaDestino = (obj.mesDestino && obj.anioDestino) ? `<span class="text-slate-400 block text-[10px]">Meta: ${obj.mesDestino} ${obj.anioDestino}</span>` : '';
+
         cont.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
             <div class="flex justify-between items-start">
               <div>
                 <h4 class="font-bold text-white text-sm">${obj.nombre}</h4>
-                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} €</p>
+                <p class="text-[11px] text-slate-400">Objetivo: ${Number(obj.monto).toLocaleString()} €</p>
+                ${textoFechaDestino}
               </div>
               <div class="flex items-center space-x-1">
                 <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
@@ -567,10 +590,12 @@
         if (base >= obj.monto) textoSimulacion = 'Alcanzado';
         else if (!usarAhorro) textoSimulacion = 'Sin ahorro mensual';
 
+        const textoFecha = (obj.mesDestino && obj.anioDestino) ? ` (${obj.mesDestino} ${obj.anioDestino})` : '';
+
         cont.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-1">
             <div class="flex justify-between items-center text-xs">
-              <span class="font-bold text-white">${obj.nombre}</span>
+              <span class="font-bold text-white">${obj.nombre}${textoFecha}</span>
               <span class="text-indigo-400 font-bold">${textoSimulacion}</span>
             </div>
             <p class="text-[11px] text-slate-400">Ritmo simulado: ${usarAhorro ? ahorroTotalMensual + ' €/mes' : 'Solo capital acumulado'}</p>
@@ -601,6 +626,8 @@
         document.getElementById('obj-nombre').value = item.nombre;
         document.getElementById('obj-monto').value = item.monto;
         document.getElementById('obj-prioridad').value = item.prioridad;
+        document.getElementById('obj-mes-destino').value = item.mesDestino || 'Junio';
+        document.getElementById('obj-anio-destino').value = item.anioDestino || 2027;
         document.getElementById('obj-usar-futuros').checked = item.usarFuturos !== false;
         document.getElementById('obj-usar-corriente').checked = item.usarCorriente;
         document.getElementById('obj-usar-fondos').checked = item.usarFondos;
@@ -609,6 +636,8 @@
         document.getElementById('obj-nombre').value = '';
         document.getElementById('obj-monto').value = '';
         document.getElementById('obj-prioridad').value = 'Media';
+        document.getElementById('obj-mes-destino').value = 'Junio';
+        document.getElementById('obj-anio-destino').value = 2027;
         document.getElementById('obj-usar-futuros').checked = true;
         document.getElementById('obj-usar-corriente').checked = true;
         document.getElementById('obj-usar-fondos').checked = false;
@@ -621,17 +650,21 @@
       const nombre = document.getElementById('obj-nombre').value.trim();
       const monto = Number(document.getElementById('obj-monto').value);
       const prioridad = document.getElementById('obj-prioridad').value;
+      const mesDestino = document.getElementById('obj-mes-destino').value;
+      const anioDestino = Number(document.getElementById('obj-anio-destino').value);
       const usarFuturos = document.getElementById('obj-usar-futuros').checked;
       const usarCorriente = document.getElementById('obj-usar-corriente').checked;
       const usarFondos = document.getElementById('obj-usar-fondos').checked;
 
       if (nombre && !isNaN(monto) && monto > 0) {
         if (!estado.objetivos) estado.objetivos = [];
+        const nuevoObj = { id: id || Date.now(), nombre, monto, prioridad, mesDestino, anioDestino, usarFuturos, usarCorriente, usarFondos };
+        
         if (id) {
           const idx = estado.objetivos.findIndex(o => o.id === id);
-          if (idx !== -1) estado.objetivos[idx] = { id, nombre, monto, prioridad, usarFuturos, usarCorriente, usarFondos };
+          if (idx !== -1) estado.objetivos[idx] = nuevoObj;
         } else {
-          estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarFuturos, usarCorriente, usarFondos });
+          estado.objetivos.push(nuevoObj);
         }
         cerrarModal('modal-objetivo');
         renderizarTodo();
