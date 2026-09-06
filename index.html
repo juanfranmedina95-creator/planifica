@@ -29,31 +29,35 @@
     <section id="sec-general" class="space-y-4">
       <!-- Tarjeta Capacidad Ahorro -->
       <div class="bg-gradient-to-br from-indigo-900 to-slate-800 border border-indigo-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
-        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad Ahorro Mensual Neta</p>
+        <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad Ahorro Mensual Base</p>
         <div class="flex items-baseline space-x-2 mt-1">
           <span id="txt-ahorro-mensual" class="text-3xl font-extrabold text-emerald-400">0 €</span>
           <span class="text-xs text-slate-400">/ mes</span>
         </div>
-        <p class="text-[11px] text-slate-400 mt-2">Calculado automáticamente desde tus ingresos y gastos configurados.</p>
+        <p id="txt-ahorro-mes-actual" class="text-[11px] text-indigo-300 mt-2">Ahorro estimado este mes (con extras): 0 €</p>
       </div>
 
       <!-- Resumen Patrimonio -->
-      <div class="grid grid-cols-2 gap-3">
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <p class="text-xs text-slate-400 font-medium">Cuenta Corriente</p>
-          <p id="txt-cuenta-corriente" class="text-lg font-bold text-slate-100 mt-1">0 €</p>
+      <div class="grid grid-cols-3 gap-2">
+        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 text-center">
+          <p class="text-[10px] text-slate-400 font-medium">Patrimonio Total</p>
+          <p id="txt-patrimonio-total" class="text-sm font-bold text-emerald-400 mt-1">0 €</p>
         </div>
-        <div class="bg-slate-800 p-4 rounded-xl border border-slate-700">
-          <p class="text-xs text-slate-400 font-medium">Total en Fondos</p>
-          <p id="txt-fondos-total" class="text-lg font-bold text-amber-400 mt-1">0 €</p>
+        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 text-center">
+          <p class="text-[10px] text-slate-400 font-medium">Cuenta Corriente</p>
+          <p id="txt-cuenta-corriente" class="text-sm font-bold text-slate-100 mt-1">0 €</p>
+        </div>
+        <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 text-center">
+          <p class="text-[10px] text-slate-400 font-medium">Fondos Inversión</p>
+          <p id="txt-fondos-total" class="text-sm font-bold text-amber-400 mt-1">0 €</p>
         </div>
       </div>
 
-      <!-- Lista de Objetivos con Prioridades -->
+      <!-- Lista de Objetivos -->
       <div class="space-y-3">
         <div class="flex justify-between items-center">
           <h2 class="text-lg font-bold text-white">Mis Objetivos</h2>
-          <button type="button" onclick="abrirModal('modal-objetivo')" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer">
+          <button type="button" onclick="abrirModalObjetivo()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer">
             <i class="fa-solid fa-plus"></i><span>Nuevo</span>
           </button>
         </div>
@@ -61,17 +65,17 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: INGRESOS Y GASTOS (DINÁMICOS) -->
+    <!-- SECCIÓN 2: INGRESOS Y GASTOS -->
     <section id="sec-finanzas" class="space-y-4 hidden">
-      <h2 class="text-lg font-bold text-white">Estimación Mensual</h2>
+      <h2 class="text-lg font-bold text-white">Presupuesto Mensual</h2>
       
-      <!-- Ingresos -->
+      <!-- Ingresos Base -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-emerald-400 flex items-center space-x-2">
-          <i class="fa-solid fa-wallet"></i><span>Ingresos Estimados</span>
+          <i class="fa-solid fa-wallet"></i><span>Ingreso Recurrente Mensual</span>
         </h3>
         <div>
-          <label class="text-xs text-slate-400">Ingresos Totales al Mes (€)</label>
+          <label class="text-xs text-slate-400">Nómina / Ingresos fijos (€)</label>
           <input type="number" id="inp-ingresos" value="2500" oninput="actualizarIngresos()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white focus:ring-2 focus:ring-indigo-500 outline-none">
         </div>
       </div>
@@ -80,29 +84,31 @@
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="text-sm font-semibold text-rose-400 flex items-center space-x-2">
-            <i class="fa-solid fa-receipt"></i><span>Gastos Estimados</span>
+            <i class="fa-solid fa-receipt"></i><span>Gastos Recurrentes</span>
           </h3>
-          <button type="button" onclick="abrirModal('modal-gasto')" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg cursor-pointer">
-            <i class="fa-solid fa-plus mr-1"></i>Añadir
+          <button type="button" onclick="abrirModalGasto()" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg cursor-pointer">
+            <i class="fa-solid fa-plus mr-1"></i>Añadir Gasto
           </button>
         </div>
         <div id="contenedor-gastos" class="space-y-2"></div>
       </div>
 
-      <!-- Gastos Extra Puntuales -->
+      <!-- Movimientos Extraordinarios por Mes -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-        <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
-          <i class="fa-solid fa-triangle-exclamation"></i><span>Gastos Extras Este Mes</span>
-        </h3>
-        <p class="text-xs text-slate-400">Gastos puntuales (ej. reparaciones) que afectan solo al mes actual.</p>
-        <div class="flex gap-2">
-          <input type="number" id="gasto-extra" placeholder="Monto extra (€)" class="w-2/3 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-          <button type="button" onclick="aplicarGastoExtra()" class="w-1/3 bg-amber-600 hover:bg-amber-500 text-xs font-bold rounded-lg text-white">Aplicar</button>
+        <div class="flex justify-between items-center">
+          <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
+            <i class="fa-solid fa-calendar-days"></i><span>Movimientos Extraordinarios</span>
+          </h3>
+          <button type="button" onclick="abrirModalExtra()" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg cursor-pointer">
+            <i class="fa-solid fa-plus mr-1"></i>Añadir Extra
+          </button>
         </div>
+        <p class="text-xs text-slate-400">Ingresos o gastos puntuales asignados a un mes específico.</p>
+        <div id="contenedor-extras" class="space-y-2"></div>
       </div>
     </section>
 
-    <!-- SECCIÓN 3: CUENTAS Y FONDOS (MÚLTIPLES) -->
+    <!-- SECCIÓN 3: CUENTAS Y FONDOS -->
     <section id="sec-fondos" class="space-y-4 hidden">
       <h2 class="text-lg font-bold text-white">Gestión de Cuentas y Fondos</h2>
 
@@ -112,27 +118,27 @@
         <input type="number" id="inp-cuenta-corriente" value="6000" oninput="guardarSaldoCorriente()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
       </div>
 
-      <!-- Lista de Fondos de Inversión Individuales -->
+      <!-- Lista de Fondos de Inversión -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
             <i class="fa-solid fa-piggy-bank"></i><span>Fondos de Inversión</span>
           </h3>
-          <button type="button" onclick="abrirModal('modal-fondo')" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg cursor-pointer">
+          <button type="button" onclick="abrirModalFondo()" class="text-[11px] bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1 rounded-lg cursor-pointer">
             <i class="fa-solid fa-plus mr-1"></i>Añadir Fondo
           </button>
         </div>
         <div id="contenedor-fondos" class="space-y-2"></div>
       </div>
 
-      <!-- Domiciliación/Traspaso Automático -->
+      <!-- Traspaso Automático -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-indigo-400 flex items-center space-x-2">
           <i class="fa-solid fa-arrow-right-arrow-left"></i><span>Traspaso Automático Mensual</span>
         </h3>
-        <p class="text-xs text-slate-400">Aportación periódica desde Cuenta Corriente hacia tus Inversiones.</p>
+        <p class="text-xs text-slate-400">Aportación periódica desde Cuenta Corriente hacia Inversiones.</p>
         <div>
-          <label class="text-xs text-slate-400">Traspaso Automático Mensual (€)</label>
+          <label class="text-xs text-slate-400">Traspaso Mensual (€)</label>
           <input type="number" id="inp-traspaso" value="200" oninput="guardarTraspaso()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
         </div>
       </div>
@@ -143,7 +149,7 @@
       <h2 class="text-lg font-bold text-white">Simulador de Ahorro</h2>
 
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-4">
-        <label class="text-xs text-slate-400 font-medium">¿Ahorro mensual adicional deseado?</label>
+        <label class="text-xs text-slate-400 font-medium">¿Ahorro mensual extra en el simulador?</label>
         <input type="range" id="simulador-rango" min="0" max="1000" step="50" value="0" oninput="actualizarSimulacion()" class="w-full accent-indigo-500">
         <div class="flex justify-between text-xs font-semibold">
           <span class="text-slate-400">+0 €/mes</span>
@@ -181,32 +187,43 @@
 
   <!-- MODAL: OBJETIVO -->
   <div id="modal-objetivo" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl">
-      <h3 class="text-base font-bold text-white">Nuevo Objetivo</h3>
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-3 shadow-2xl">
+      <h3 id="modal-obj-titulo" class="text-base font-bold text-white">Objetivo</h3>
+      <input type="hidden" id="obj-id">
       <div>
         <label class="text-xs text-slate-400">Nombre</label>
-        <input type="text" id="obj-nombre" placeholder="Ej: Entrada Piso" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
+        <input type="text" id="obj-nombre" placeholder="Ej: Entrada Piso" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
       </div>
-      <div>
-        <label class="text-xs text-slate-400">Monto objetivo (€)</label>
-        <input type="number" id="obj-monto" placeholder="30000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-xs text-slate-400">Monto (€)</label>
+          <input type="number" id="obj-monto" placeholder="30000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Plazo (meses)</label>
+          <input type="number" id="obj-plazo" placeholder="24" value="12" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+        </div>
       </div>
       <div>
         <label class="text-xs text-slate-400">Prioridad</label>
-        <select id="obj-prioridad" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
+        <select id="obj-prioridad" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
           <option value="Alta">🔴 Alta</option>
           <option value="Media" selected>🟡 Media</option>
           <option value="Baja">🟢 Baja</option>
         </select>
       </div>
-      <div class="space-y-2 text-xs">
-        <label class="flex items-center space-x-2 text-slate-300">
-          <input type="checkbox" id="obj-usar-fondos" class="rounded bg-slate-900 border-slate-700 text-indigo-600">
-          <span>Permitir uso de Fondos de Inversión</span>
-        </label>
+      <div class="space-y-2 text-xs border-t border-slate-700 pt-2">
         <label class="flex items-center space-x-2 text-slate-300">
           <input type="checkbox" id="obj-usar-corriente" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
-          <span>Usar saldo actual de Cuenta Corriente</span>
+          <span>Usar saldo Cuenta Corriente</span>
+        </label>
+        <label class="flex items-center space-x-2 text-slate-300">
+          <input type="checkbox" id="obj-usar-fondos" class="rounded bg-slate-900 border-slate-700 text-indigo-600">
+          <span>Usar Fondos de Inversión</span>
+        </label>
+        <label class="flex items-center space-x-2 text-slate-300">
+          <input type="checkbox" id="obj-usar-ahorro-futuro" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
+          <span>Computar ahorro futuro durante el plazo</span>
         </label>
       </div>
       <div class="flex gap-2 pt-2">
@@ -216,21 +233,68 @@
     </div>
   </div>
 
-  <!-- MODAL: CATEGORÍA GASTO -->
+  <!-- MODAL: GASTO RECURRENTE -->
   <div id="modal-gasto" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl">
-      <h3 class="text-base font-bold text-white">Nueva Categoría de Gasto</h3>
+      <h3 id="modal-gasto-titulo" class="text-base font-bold text-white">Gasto Recurrente</h3>
+      <input type="hidden" id="gasto-id">
       <div>
-        <label class="text-xs text-slate-400">Categoría</label>
-        <input type="text" id="gasto-nombre" placeholder="Ej: Gimnasio, Ocio..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
+        <label class="text-xs text-slate-400">Categoría / Nombre</label>
+        <input type="text" id="gasto-nombre" placeholder="Ej: Gimnasio, Alquiler..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
       </div>
       <div>
-        <label class="text-xs text-slate-400">Monto estimado mensual (€)</label>
+        <label class="text-xs text-slate-400">Monto mensual (€)</label>
         <input type="number" id="gasto-monto" placeholder="50" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
       </div>
       <div class="flex gap-2 pt-2">
         <button type="button" onclick="cerrarModal('modal-gasto')" class="w-1/2 bg-slate-700 text-xs py-2.5 rounded-lg text-slate-300 font-semibold">Cancelar</button>
-        <button type="button" onclick="guardarGasto()" class="w-1/2 bg-rose-600 text-xs py-2.5 rounded-lg text-white font-bold">Añadir</button>
+        <button type="button" onclick="guardarGasto()" class="w-1/2 bg-rose-600 text-xs py-2.5 rounded-lg text-white font-bold">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: MOVIMIENTO EXTRAORDINARIO -->
+  <div id="modal-extra" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-3 shadow-2xl">
+      <h3 id="modal-extra-titulo" class="text-base font-bold text-white">Movimiento Extraordinario</h3>
+      <input type="hidden" id="extra-id">
+      <div>
+        <label class="text-xs text-slate-400">Tipo</label>
+        <select id="extra-tipo" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+          <option value="gasto">🔴 Gasto Extra</option>
+          <option value="ingreso">🟢 Ingreso Extra</option>
+        </select>
+      </div>
+      <div>
+        <label class="text-xs text-slate-400">Concepto</label>
+        <input type="text" id="extra-concepto" placeholder="Ej: Seguro coche, Paga extra..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+      </div>
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="text-xs text-slate-400">Monto (€)</label>
+          <input type="number" id="extra-monto" placeholder="300" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Mes</label>
+          <select id="extra-mes" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+            <option value="Enero">Enero</option>
+            <option value="Febrero">Febrero</option>
+            <option value="Marzo">Marzo</option>
+            <option value="Abril">Abril</option>
+            <option value="Mayo">Mayo</option>
+            <option value="Junio">Junio</option>
+            <option value="Julio">Julio</option>
+            <option value="Agosto">Agosto</option>
+            <option value="Septiembre">Septiembre</option>
+            <option value="Octubre">Octubre</option>
+            <option value="Noviembre">Noviembre</option>
+            <option value="Diciembre">Diciembre</option>
+          </select>
+        </div>
+      </div>
+      <div class="flex gap-2 pt-2">
+        <button type="button" onclick="cerrarModal('modal-extra')" class="w-1/2 bg-slate-700 text-xs py-2.5 rounded-lg text-slate-300 font-semibold">Cancelar</button>
+        <button type="button" onclick="guardarExtra()" class="w-1/2 bg-amber-600 text-xs py-2.5 rounded-lg text-white font-bold">Guardar</button>
       </div>
     </div>
   </div>
@@ -238,7 +302,8 @@
   <!-- MODAL: FONDO INVERSIÓN -->
   <div id="modal-fondo" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-4 shadow-2xl">
-      <h3 class="text-base font-bold text-white">Nuevo Fondo de Inversión</h3>
+      <h3 id="modal-fondo-titulo" class="text-base font-bold text-white">Fondo de Inversión</h3>
+      <input type="hidden" id="fondo-id">
       <div>
         <label class="text-xs text-slate-400">Nombre del Fondo</label>
         <input type="text" id="fondo-nombre" placeholder="Ej: Indexado S&P500" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white outline-none">
@@ -249,13 +314,15 @@
       </div>
       <div class="flex gap-2 pt-2">
         <button type="button" onclick="cerrarModal('modal-fondo')" class="w-1/2 bg-slate-700 text-xs py-2.5 rounded-lg text-slate-300 font-semibold">Cancelar</button>
-        <button type="button" onclick="guardarFondo()" class="w-1/2 bg-amber-600 text-xs py-2.5 rounded-lg text-white font-bold">Añadir</button>
+        <button type="button" onclick="guardarFondo()" class="w-1/2 bg-amber-600 text-xs py-2.5 rounded-lg text-white font-bold">Guardar</button>
       </div>
     </div>
   </div>
 
   <!-- LÓGICA Y ESTADO -->
   <script>
+    const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
+
     let estado = {
       ingresos: 2500,
       gastos: [
@@ -263,7 +330,10 @@
         { id: 2, nombre: "Comida / Supermercado", monto: 350 },
         { id: 3, nombre: "Transporte", monto: 120 }
       ],
-      gastoExtra: 0,
+      extras: [
+        { id: 1, tipo: 'gasto', concepto: 'Seguro Coche', monto: 300, mes: 'Mayo' },
+        { id: 2, tipo: 'ingreso', concepto: 'Paga Extra', monto: 1200, mes: 'Julio' }
+      ],
       corriente: 6000,
       fondos: [
         { id: 1, nombre: "Fondo Indexado Global", monto: 8000 },
@@ -271,13 +341,13 @@
       ],
       traspaso: 200,
       objetivos: [
-        { id: 1, nombre: "🏠 Entrada para Piso", monto: 40000, prioridad: "Alta", usarFondos: true, usarCorriente: true },
-        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFondos: false, usarCorriente: false }
+        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, plazoMeses: 36, prioridad: "Alta", usarFondos: true, usarCorriente: true, usarAhorroFuturo: true },
+        { id: 2, nombre: "✈️ Viaje Japón", monto: 3000, plazoMeses: 10, prioridad: "Media", usarFondos: false, usarCorriente: false, usarAhorroFuturo: true }
       ]
     };
 
     function inicializar() {
-      const guardado = localStorage.getItem('planifica_data_v3');
+      const guardado = localStorage.getItem('planifica_data_v4');
       if (guardado) {
         try { estado = JSON.parse(guardado); } catch(e) {}
       }
@@ -298,26 +368,49 @@
       return (estado.fondos || []).reduce((acc, f) => acc + Number(f.monto || 0), 0);
     }
 
-    function totalGastos() {
-      const gastosOrdinarios = (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0);
-      return gastosOrdinarios + Number(estado.gastoExtra || 0);
+    function totalGastosBase() {
+      return (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0);
     }
 
-    function calcularCapacidadAhorro() {
-      return Math.max(0, Number(estado.ingresos || 0) - totalGastos());
+    function calcularAhorroBase() {
+      return Math.max(0, Number(estado.ingresos || 0) - totalGastosBase());
+    }
+
+    function obtenerMesActualNombre() {
+      const idx = new Date().getMonth();
+      return mesesNombres[idx];
+    }
+
+    function calcularAhorroMesActual() {
+      const mesActual = obtenerMesActualNombre();
+      let ahorro = calcularAhorroBase();
+      
+      (estado.extras || []).filter(e => e.mes === mesActual).forEach(e => {
+        if (e.tipo === 'ingreso') ahorro += Number(e.monto || 0);
+        if (e.tipo === 'gasto') ahorro -= Number(e.monto || 0);
+      });
+
+      return Math.max(0, ahorro);
     }
 
     function renderizarTodo() {
-      const ahorro = calcularCapacidadAhorro();
-      document.getElementById('txt-ahorro-mensual').innerText = `${ahorro.toLocaleString()} €`;
+      const ahorroBase = calcularAhorroBase();
+      const ahorroMes = calcularAhorroMesActual();
+      const patrimonio = Number(estado.corriente || 0) + totalFondos();
+
+      document.getElementById('txt-ahorro-mensual').innerText = `${ahorroBase.toLocaleString()} €`;
+      document.getElementById('txt-ahorro-mes-actual').innerText = `Ahorro estimado este mes (${obtenerMesActualNombre()}): ${ahorroMes.toLocaleString()} €`;
+      document.getElementById('txt-patrimonio-total').innerText = `${patrimonio.toLocaleString()} €`;
       document.getElementById('txt-cuenta-corriente').innerText = `${Number(estado.corriente || 0).toLocaleString()} €`;
       document.getElementById('txt-fondos-total').innerText = `${totalFondos().toLocaleString()} €`;
 
       renderizarGastos();
+      renderizarExtras();
       renderizarFondos();
       renderizarObjetivos();
       actualizarSimulacion();
-      localStorage.setItem('planifica_data_v3', JSON.stringify(estado));
+
+      localStorage.setItem('planifica_data_v4', JSON.stringify(estado));
     }
 
     function renderizarGastos() {
@@ -327,9 +420,34 @@
         cont.innerHTML += `
           <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
             <span class="text-slate-300 font-medium">${g.nombre}</span>
-            <div class="flex items-center space-x-3">
-              <span class="font-bold text-rose-400">${Number(g.monto).toLocaleString()} €</span>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-rose-400 mr-2">${Number(g.monto).toLocaleString()} €</span>
+              <button type="button" onclick="abrirModalGasto(${g.id})" class="text-slate-400 hover:text-indigo-400 p-1"><i class="fa-solid fa-pen"></i></button>
               <button type="button" onclick="eliminarGasto(${g.id})" class="text-slate-500 hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function renderizarExtras() {
+      const cont = document.getElementById('contenedor-extras');
+      cont.innerHTML = '';
+      (estado.extras || []).forEach(e => {
+        const esIngreso = e.tipo === 'ingreso';
+        const badgeColor = esIngreso ? 'text-emerald-400 bg-emerald-500/10' : 'text-rose-400 bg-rose-500/10';
+        const signo = esIngreso ? '+' : '-';
+
+        cont.innerHTML += `
+          <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
+            <div>
+              <span class="font-semibold text-white block">${e.concepto}</span>
+              <span class="text-[10px] text-slate-400">${e.mes}</span>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold px-2 py-0.5 rounded ${badgeColor}">${signo}${Number(e.monto).toLocaleString()} €</span>
+              <button type="button" onclick="abrirModalExtra(${e.id})" class="text-slate-400 hover:text-indigo-400 p-1"><i class="fa-solid fa-pen"></i></button>
+              <button type="button" onclick="eliminarExtra(${e.id})" class="text-slate-500 hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
         `;
@@ -343,8 +461,9 @@
         cont.innerHTML += `
           <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
             <span class="text-slate-300 font-medium">${f.nombre}</span>
-            <div class="flex items-center space-x-3">
-              <span class="font-bold text-amber-400">${Number(f.monto).toLocaleString()} €</span>
+            <div class="flex items-center space-x-2">
+              <span class="font-bold text-amber-400 mr-2">${Number(f.monto).toLocaleString()} €</span>
+              <button type="button" onclick="abrirModalFondo(${f.id})" class="text-slate-400 hover:text-indigo-400 p-1"><i class="fa-solid fa-pen"></i></button>
               <button type="button" onclick="eliminarFondo(${f.id})" class="text-slate-500 hover:text-rose-500 p-1"><i class="fa-solid fa-trash"></i></button>
             </div>
           </div>
@@ -358,12 +477,21 @@
 
       const orden = { "Alta": 1, "Media": 2, "Baja": 3 };
       const listaOrdenada = [...(estado.objetivos || [])].sort((a,b) => orden[a.prioridad] - orden[b.prioridad]);
+      const ahorroBase = calcularAhorroBase();
 
       listaOrdenada.forEach(obj => {
-        let base = obj.usarCorriente ? Number(estado.corriente || 0) : 0;
-        if (obj.usarFondos) base += totalFondos();
+        let capitalComputable = 0;
+        if (obj.usarCorriente) capitalComputable += Number(estado.corriente || 0);
+        if (obj.usarFondos) capitalComputable += totalFondos();
         
-        const pct = Math.min(100, Math.round((base / obj.monto) * 100));
+        const plazo = Number(obj.plazoMeses || 12);
+        if (obj.usarAhorroFuturo) {
+          capitalComputable += (ahorroBase * plazo);
+        }
+
+        const pct = Math.min(100, Math.round((capitalComputable / obj.monto) * 100));
+        const cuotaMensualNecesaria = Math.max(0, Math.ceil((obj.monto - (capitalComputable - (obj.usarAhorroFuturo ? ahorroBase * plazo : 0))) / plazo));
+
         const colorPrioridad = obj.prioridad === 'Alta' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : 
                               (obj.prioridad === 'Media' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
 
@@ -372,19 +500,22 @@
             <div class="flex justify-between items-start">
               <div>
                 <h4 class="font-bold text-white text-sm">${obj.nombre}</h4>
-                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} €</p>
+                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} € en ${plazo} meses</p>
               </div>
-              <div class="flex items-center space-x-2">
+              <div class="flex items-center space-x-1">
                 <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
-                <button type="button" onclick="eliminarObjetivo(${obj.id})" class="text-slate-500 hover:text-rose-500 text-xs p-1"><i class="fa-solid fa-trash"></i></button>
+                <button type="button" onclick="abrirModalObjetivo(${obj.id})" class="text-slate-400 hover:text-indigo-400 p-1 text-xs"><i class="fa-solid fa-pen"></i></button>
+                <button type="button" onclick="eliminarObjetivo(${obj.id})" class="text-slate-500 hover:text-rose-500 p-1 text-xs"><i class="fa-solid fa-trash"></i></button>
               </div>
             </div>
+            
             <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
-              <div class="bg-indigo-500 h-2 rounded-full" style="width: ${pct}%"></div>
+              <div class="${pct >= 100 ? 'bg-emerald-500' : 'bg-indigo-500'} h-2 rounded-full" style="width: ${pct}%"></div>
             </div>
+            
             <div class="flex justify-between text-[10px] text-slate-400">
-              <span>Capital computable: ${base.toLocaleString()} €</span>
-              <span class="font-bold text-indigo-300">${pct}%</span>
+              <span>Cuota necesaria: <strong class="text-indigo-300">${cuotaMensualNecesaria.toLocaleString()} €/mes</strong></span>
+              <span class="font-bold ${pct >= 100 ? 'text-emerald-400' : 'text-indigo-300'}">${pct}% cubierto</span>
             </div>
           </div>
         `;
@@ -395,12 +526,13 @@
       const extra = Number(document.getElementById('simulador-rango').value || 0);
       document.getElementById('txt-extra-simulado').innerText = `+${extra} €/mes`;
       
-      const ahorroTotalMensual = calcularCapacidadAhorro() + extra;
+      const ahorroTotalMensual = calcularAhorroBase() + extra;
       const cont = document.getElementById('contenedor-proyeccion-objetivos');
       cont.innerHTML = '';
 
       (estado.objetivos || []).forEach(obj => {
-        let base = obj.usarCorriente ? Number(estado.corriente || 0) : 0;
+        let base = 0;
+        if (obj.usarCorriente) base += Number(estado.corriente || 0);
         if (obj.usarFondos) base += totalFondos();
 
         const faltante = Math.max(0, obj.monto - base);
@@ -412,7 +544,7 @@
               <span class="font-bold text-white">${obj.nombre}</span>
               <span class="text-indigo-400 font-bold">${meses === Infinity ? 'Indefinido' : meses + ' meses'}</span>
             </div>
-            <p class="text-[11px] text-slate-400">Faltan: ${faltante.toLocaleString()} € a ${ahorroTotalMensual} €/mes</p>
+            <p class="text-[11px] text-slate-400">Faltante sin ahorros futuros: ${faltante.toLocaleString()} € (${ahorroTotalMensual} €/mes)</p>
           </div>
         `;
       });
@@ -427,68 +559,170 @@
     function actualizarIngresos() { estado.ingresos = Number(document.getElementById('inp-ingresos').value || 0); renderizarTodo(); }
     function guardarSaldoCorriente() { estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value || 0); renderizarTodo(); }
     function guardarTraspaso() { estado.traspaso = Number(document.getElementById('inp-traspaso').value || 0); renderizarTodo(); }
-    function aplicarGastoExtra() { estado.gastoExtra = Number(document.getElementById('gasto-extra').value || 0); renderizarTodo(); }
 
-    function abrirModal(id) {
-      document.getElementById(id).classList.remove('hidden');
-    }
+    function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
+    function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    function cerrarModal(id) {
-      document.getElementById(id).classList.add('hidden');
-    }
-
-    function guardarGasto() {
-      const nombreInput = document.getElementById('gasto-nombre');
-      const montoInput = document.getElementById('gasto-monto');
-      const nombre = nombreInput.value.trim();
-      const monto = Number(montoInput.value);
-
-      if (nombre && !isNaN(monto) && monto > 0) {
-        if (!estado.gastos) estado.gastos = [];
-        estado.gastos.push({ id: Date.now(), nombre, monto });
-        nombreInput.value = '';
-        montoInput.value = '';
-        cerrarModal('modal-gasto');
-        renderizarTodo();
+    // --- OBJETIVO (Añadir / Editar) ---
+    function abrirModalObjetivo(id = null) {
+      document.getElementById('obj-id').value = id || '';
+      if (id) {
+        const item = estado.objetivos.find(o => o.id === id);
+        document.getElementById('modal-obj-titulo').innerText = "Editar Objetivo";
+        document.getElementById('obj-nombre').value = item.nombre;
+        document.getElementById('obj-monto').value = item.monto;
+        document.getElementById('obj-plazo').value = item.plazoMeses || 12;
+        document.getElementById('obj-prioridad').value = item.prioridad;
+        document.getElementById('obj-usar-corriente').checked = item.usarCorriente;
+        document.getElementById('obj-usar-fondos').checked = item.usarFondos;
+        document.getElementById('obj-usar-ahorro-futuro').checked = item.usarAhorroFuturo !== false;
+      } else {
+        document.getElementById('modal-obj-titulo').innerText = "Nuevo Objetivo";
+        document.getElementById('obj-nombre').value = '';
+        document.getElementById('obj-monto').value = '';
+        document.getElementById('obj-plazo').value = 12;
+        document.getElementById('obj-prioridad').value = 'Media';
+        document.getElementById('obj-usar-corriente').checked = true;
+        document.getElementById('obj-usar-fondos').checked = false;
+        document.getElementById('obj-usar-ahorro-futuro').checked = true;
       }
-    }
-
-    function guardarFondo() {
-      const nombreInput = document.getElementById('fondo-nombre');
-      const montoInput = document.getElementById('fondo-monto');
-      const nombre = nombreInput.value.trim();
-      const monto = Number(montoInput.value);
-
-      if (nombre && !isNaN(monto) && monto >= 0) {
-        if (!estado.fondos) estado.fondos = [];
-        estado.fondos.push({ id: Date.now(), nombre, monto });
-        nombreInput.value = '';
-        montoInput.value = '';
-        cerrarModal('modal-fondo');
-        renderizarTodo();
-      }
+      abrirModal('modal-objetivo');
     }
 
     function guardarObjetivo() {
-      const nombreInput = document.getElementById('obj-nombre');
-      const montoInput = document.getElementById('obj-monto');
-      const nombre = nombreInput.value.trim();
-      const monto = Number(montoInput.value);
+      const id = Number(document.getElementById('obj-id').value);
+      const nombre = document.getElementById('obj-nombre').value.trim();
+      const monto = Number(document.getElementById('obj-monto').value);
+      const plazoMeses = Number(document.getElementById('obj-plazo').value);
       const prioridad = document.getElementById('obj-prioridad').value;
-      const usarFondos = document.getElementById('obj-usar-fondos').checked;
       const usarCorriente = document.getElementById('obj-usar-corriente').checked;
+      const usarFondos = document.getElementById('obj-usar-fondos').checked;
+      const usarAhorroFuturo = document.getElementById('obj-usar-ahorro-futuro').checked;
 
-      if (nombre && !isNaN(monto) && monto > 0) {
+      if (nombre && !isNaN(monto) && monto > 0 && plazoMeses > 0) {
         if (!estado.objetivos) estado.objetivos = [];
-        estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarFondos, usarCorriente });
-        nombreInput.value = '';
-        montoInput.value = '';
+        if (id) {
+          const idx = estado.objetivos.findIndex(o => o.id === id);
+          if (idx !== -1) estado.objetivos[idx] = { id, nombre, monto, plazoMeses, prioridad, usarCorriente, usarFondos, usarAhorroFuturo };
+        } else {
+          estado.objetivos.push({ id: Date.now(), nombre, monto, plazoMeses, prioridad, usarCorriente, usarFondos, usarAhorroFuturo });
+        }
         cerrarModal('modal-objetivo');
         renderizarTodo();
       }
     }
 
+    // --- GASTO RECURRENTE (Añadir / Editar) ---
+    function abrirModalGasto(id = null) {
+      document.getElementById('gasto-id').value = id || '';
+      if (id) {
+        const item = estado.gastos.find(g => g.id === id);
+        document.getElementById('modal-gasto-titulo').innerText = "Editar Gasto Recurrente";
+        document.getElementById('gasto-nombre').value = item.nombre;
+        document.getElementById('gasto-monto').value = item.monto;
+      } else {
+        document.getElementById('modal-gasto-titulo').innerText = "Nuevo Gasto Recurrente";
+        document.getElementById('gasto-nombre').value = '';
+        document.getElementById('gasto-monto').value = '';
+      }
+      abrirModal('modal-gasto');
+    }
+
+    function guardarGasto() {
+      const id = Number(document.getElementById('gasto-id').value);
+      const nombre = document.getElementById('gasto-nombre').value.trim();
+      const monto = Number(document.getElementById('gasto-monto').value);
+
+      if (nombre && !isNaN(monto) && monto > 0) {
+        if (!estado.gastos) estado.gastos = [];
+        if (id) {
+          const idx = estado.gastos.findIndex(g => g.id === id);
+          if (idx !== -1) estado.gastos[idx] = { id, nombre, monto };
+        } else {
+          estado.gastos.push({ id: Date.now(), nombre, monto });
+        }
+        cerrarModal('modal-gasto');
+        renderizarTodo();
+      }
+    }
+
+    // --- EXTRAORDINARIOS (Añadir / Editar) ---
+    function abrirModalExtra(id = null) {
+      document.getElementById('extra-id').value = id || '';
+      if (id) {
+        const item = estado.extras.find(e => e.id === id);
+        document.getElementById('modal-extra-titulo').innerText = "Editar Movimiento Extra";
+        document.getElementById('extra-tipo').value = item.tipo;
+        document.getElementById('extra-concepto').value = item.concepto;
+        document.getElementById('extra-monto').value = item.monto;
+        document.getElementById('extra-mes').value = item.mes;
+      } else {
+        document.getElementById('modal-extra-titulo').innerText = "Nuevo Movimiento Extra";
+        document.getElementById('extra-tipo').value = 'gasto';
+        document.getElementById('extra-concepto').value = '';
+        document.getElementById('extra-monto').value = '';
+        document.getElementById('extra-mes').value = obtenerMesActualNombre();
+      }
+      abrirModal('modal-extra');
+    }
+
+    function guardarExtra() {
+      const id = Number(document.getElementById('extra-id').value);
+      const tipo = document.getElementById('extra-tipo').value;
+      const concepto = document.getElementById('extra-concepto').value.trim();
+      const monto = Number(document.getElementById('extra-monto').value);
+      const mes = document.getElementById('extra-mes').value;
+
+      if (concepto && !isNaN(monto) && monto > 0) {
+        if (!estado.extras) estado.extras = [];
+        if (id) {
+          const idx = estado.extras.findIndex(e => e.id === id);
+          if (idx !== -1) estado.extras[idx] = { id, tipo, concepto, monto, mes };
+        } else {
+          estado.extras.push({ id: Date.now(), tipo, concepto, monto, mes });
+        }
+        cerrarModal('modal-extra');
+        renderizarTodo();
+      }
+    }
+
+    // --- FONDO INVERSIÓN (Añadir / Editar) ---
+    function abrirModalFondo(id = null) {
+      document.getElementById('fondo-id').value = id || '';
+      if (id) {
+        const item = estado.fondos.find(f => f.id === id);
+        document.getElementById('modal-fondo-titulo').innerText = "Editar Fondo";
+        document.getElementById('fondo-nombre').value = item.nombre;
+        document.getElementById('fondo-monto').value = item.monto;
+      } else {
+        document.getElementById('modal-fondo-titulo').innerText = "Nuevo Fondo";
+        document.getElementById('fondo-nombre').value = '';
+        document.getElementById('fondo-monto').value = '';
+      }
+      abrirModal('modal-fondo');
+    }
+
+    function guardarFondo() {
+      const id = Number(document.getElementById('fondo-id').value);
+      const nombre = document.getElementById('fondo-nombre').value.trim();
+      const monto = Number(document.getElementById('fondo-monto').value);
+
+      if (nombre && !isNaN(monto) && monto >= 0) {
+        if (!estado.fondos) estado.fondos = [];
+        if (id) {
+          const idx = estado.fondos.findIndex(f => f.id === id);
+          if (idx !== -1) estado.fondos[idx] = { id, nombre, monto };
+        } else {
+          estado.fondos.push({ id: Date.now(), nombre, monto });
+        }
+        cerrarModal('modal-fondo');
+        renderizarTodo();
+      }
+    }
+
+    // --- ELIMINAR ---
     function eliminarGasto(id) { estado.gastos = estado.gastos.filter(g => g.id !== id); renderizarTodo(); }
+    function eliminarExtra(id) { estado.extras = estado.extras.filter(e => e.id !== id); renderizarTodo(); }
     function eliminarFondo(id) { estado.fondos = estado.fondos.filter(f => f.id !== id); renderizarTodo(); }
     function eliminarObjetivo(id) { estado.objetivos = estado.objetivos.filter(o => o.id !== id); renderizarTodo(); }
 
