@@ -4,8 +4,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Planifica - Simulación y Proyección de Ahorro</title>
+  <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
   <script>
     tailwind.config = {
@@ -40,7 +43,6 @@
     }
   </script>
   <style>
-    /* Custom Scrollbar */
     ::-webkit-scrollbar {
       width: 6px;
       height: 6px;
@@ -59,6 +61,7 @@
 </head>
 <body class="h-full flex flex-col font-sans antialiased bg-slate-950 text-slate-100 selection:bg-indigo-500 selection:text-white">
 
+  <!-- Header -->
   <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur sticky top-0 z-50">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
       <div class="flex items-center gap-3">
@@ -86,9 +89,12 @@
     </div>
   </header>
 
+  <!-- Main Content -->
   <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
 
+    <!-- KPI Summary Dashboard -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      <!-- Cuenta Corriente -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-blue-500/50 transition duration-300">
         <div class="absolute -right-2 -bottom-2 opacity-5 text-blue-500 group-hover:scale-110 transition">
           <i data-lucide="wallet" class="w-24 h-24"></i>
@@ -101,18 +107,20 @@
         <p class="text-xs text-slate-400">Saldo líquido inicial disponible</p>
       </div>
 
+      <!-- Fondos de Inversión Totales -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-violet-500/50 transition duration-300">
         <div class="absolute -right-2 -bottom-2 opacity-5 text-violet-500 group-hover:scale-110 transition">
           <i data-lucide="line-chart" class="w-24 h-24"></i>
         </div>
         <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Fondos Inversión</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Total Fondos</span>
           <span class="p-1.5 bg-violet-500/10 text-violet-400 rounded-lg"><i data-lucide="line-chart" class="w-4 h-4"></i></span>
         </div>
         <div class="text-2xl font-bold text-white mb-1" id="kpi-investment-balance">0 €</div>
-        <p class="text-xs text-slate-400">Capital reservado / Intocable</p>
+        <p class="text-xs text-slate-400" id="kpi-funds-count">0 fondos configurados</p>
       </div>
 
+      <!-- Capacidad Ahorro Líquido -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-emerald-500/50 transition duration-300">
         <div class="absolute -right-2 -bottom-2 opacity-5 text-emerald-500 group-hover:scale-110 transition">
           <i data-lucide="piggy-bank" class="w-24 h-24"></i>
@@ -122,30 +130,34 @@
           <span class="p-1.5 bg-emerald-500/10 text-emerald-400 rounded-lg"><i data-lucide="piggy-bank" class="w-4 h-4"></i></span>
         </div>
         <div class="text-2xl font-bold text-emerald-400 mb-1" id="kpi-liquid-savings">0 €</div>
-        <p class="text-xs text-slate-400" id="kpi-savings-sub">Ingresos - Gastos - Aportación</p>
+        <p class="text-xs text-slate-400">Ingresos - Gastos segm. - Aportaciones</p>
       </div>
 
+      <!-- Aportación Total Fondos -->
       <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 shadow-xl relative overflow-hidden group hover:border-amber-500/50 transition duration-300">
         <div class="absolute -right-2 -bottom-2 opacity-5 text-amber-500 group-hover:scale-110 transition">
           <i data-lucide="arrow-up-right" class="w-24 h-24"></i>
         </div>
         <div class="flex justify-between items-start mb-2">
-          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Aportación Fondos / Mes</span>
+          <span class="text-xs font-semibold uppercase tracking-wider text-slate-400">Inversión Total / Mes</span>
           <span class="p-1.5 bg-amber-500/10 text-amber-400 rounded-lg"><i data-lucide="arrow-right-left" class="w-4 h-4"></i></span>
         </div>
         <div class="text-2xl font-bold text-amber-400 mb-1" id="kpi-monthly-transfer">0 €</div>
-        <p class="text-xs text-slate-400">Automatización hacia inversión</p>
+        <p class="text-xs text-slate-400">Suma aportaciones a fondos</p>
       </div>
     </div>
 
+    <!-- Layout Grid -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
       
+      <!-- Left Column: Forms (5 Cols) -->
       <div class="lg:col-span-5 space-y-6">
         
+        <!-- 1. Flujos Base y Cuenta Corriente -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
             <i data-lucide="sliders" class="w-5 h-5 text-indigo-400"></i>
-            <h2 class="font-semibold text-slate-100">Flujos y Capitales Base</h2>
+            <h2 class="font-semibold text-slate-100">Ingresos y Cuenta Corriente</h2>
           </div>
 
           <div class="grid grid-cols-2 gap-4">
@@ -157,46 +169,79 @@
               </div>
             </div>
             <div>
-              <label class="block text-xs text-slate-400 mb-1">Gastos Estimados / Mes</label>
-              <div class="relative">
-                <input type="number" id="input-expenses" min="0" value="1400" onchange="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
-                <span class="absolute left-2.5 top-2.5 text-xs text-slate-500">€</span>
-              </div>
-            </div>
-          </div>
-
-          <hr class="border-slate-800">
-
-          <div class="grid grid-cols-2 gap-4">
-            <div>
               <label class="block text-xs text-slate-400 mb-1">Cuenta Corriente (Inicial)</label>
               <div class="relative">
                 <input type="number" id="input-current-capital" min="0" value="5000" onchange="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
                 <span class="absolute left-2.5 top-2.5 text-xs text-slate-500">€</span>
               </div>
             </div>
-            <div>
-              <label class="block text-xs text-slate-400 mb-1">Fondos Inversión (Inicial)</label>
-              <div class="relative">
-                <input type="number" id="input-investment-capital" min="0" value="12000" onchange="updateConfig()" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
-                <span class="absolute left-2.5 top-2.5 text-xs text-slate-500">€</span>
-              </div>
-            </div>
-          </div>
-
-          <div class="bg-slate-950/50 p-3 rounded-xl border border-slate-800/80 space-y-2">
-            <label class="block text-xs font-medium text-indigo-300">Aportación Automática a Fondos</label>
-            <div class="flex items-center gap-3">
-              <div class="relative flex-1">
-                <input type="number" id="input-monthly-transfer" min="0" value="300" onchange="updateConfig()" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-indigo-500 transition pl-7">
-                <span class="absolute left-2.5 top-2 text-xs text-slate-500">€</span>
-              </div>
-              <span class="text-xs text-slate-400">/ mes</span>
-            </div>
-            <p class="text-[10px] text-slate-500">Se descuenta de la liquidez mensual y se suma a la proyección de fondos.</p>
           </div>
         </div>
 
+        <!-- 2. Gastos Mensuales Segmentados -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="pie-chart" class="w-5 h-5 text-indigo-400"></i>
+              <h2 class="font-semibold text-slate-100">Gastos Mensuales Segmentados</h2>
+            </div>
+            <span class="text-xs font-bold text-slate-300" id="total-segmented-expenses">Total: 0 €</span>
+          </div>
+
+          <!-- Add category form -->
+          <form onsubmit="addExpenseCategory(event)" class="flex gap-2">
+            <input type="text" id="cat-name" required placeholder="Ej. Alojamiento, Transporte..." class="flex-1 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500">
+            <input type="number" id="cat-amount" min="0" required placeholder="€/mes" class="w-24 bg-slate-950 border border-slate-800 rounded-xl px-3 py-1.5 text-xs focus:outline-none focus:border-indigo-500">
+            <button type="submit" class="bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-xl text-xs font-medium transition flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            </button>
+          </form>
+
+          <div id="expense-categories-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+            <!-- Dynamic expense categories -->
+          </div>
+        </div>
+
+        <!-- 3. Gestión de Fondos de Inversión (Múltiples) -->
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
+          <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+            <div class="flex items-center gap-2">
+              <i data-lucide="layers" class="w-5 h-5 text-violet-400"></i>
+              <h2 class="font-semibold text-slate-100">Fondos de Inversión</h2>
+            </div>
+            <button onclick="toggleFundForm()" class="text-xs bg-violet-500/10 hover:bg-violet-500/20 text-violet-400 px-2.5 py-1 rounded-lg transition font-medium flex items-center gap-1">
+              <i data-lucide="plus" class="w-3.5 h-3.5"></i> Nuevo Fondo
+            </button>
+          </div>
+
+          <!-- Form Add Fund -->
+          <form id="fund-form" onsubmit="addFund(event)" class="hidden bg-slate-950 p-4 rounded-xl border border-slate-800 space-y-3">
+            <div>
+              <label class="block text-xs text-slate-400 mb-1">Nombre del Fondo / Producto</label>
+              <input type="text" id="fund-name" required placeholder="Ej. Indexado MSCI World, PIAS..." class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Capital Inicial (€)</label>
+                <input type="number" id="fund-initial" min="0" required placeholder="5000" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+              </div>
+              <div>
+                <label class="block text-xs text-slate-400 mb-1">Aportación / Mes (€)</label>
+                <input type="number" id="fund-monthly" min="0" required placeholder="200" class="w-full bg-slate-900 border border-slate-800 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-violet-500">
+              </div>
+            </div>
+            <div class="flex justify-end gap-2 pt-1">
+              <button type="button" onclick="toggleFundForm()" class="px-3 py-1 text-xs text-slate-400 hover:text-white">Cancelar</button>
+              <button type="submit" class="px-3 py-1 text-xs bg-violet-500 hover:bg-violet-600 text-white font-semibold rounded-lg transition">Guardar Fondo</button>
+            </div>
+          </form>
+
+          <div id="funds-list" class="space-y-2 max-h-52 overflow-y-auto pr-1">
+            <!-- Dynamic investment funds -->
+          </div>
+        </div>
+
+        <!-- 4. Gastos Extra / Puntuales -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
@@ -230,9 +275,11 @@
           </form>
 
           <div id="extra-expenses-list" class="space-y-2 max-h-48 overflow-y-auto pr-1">
-            </div>
+            <!-- Dynamic extra expenses -->
+          </div>
         </div>
 
+        <!-- 5. Objetivos Creator Form -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center gap-2 border-b border-slate-800 pb-3">
             <i data-lucide="target" class="w-5 h-5 text-emerald-400"></i>
@@ -278,8 +325,10 @@
 
       </div>
 
+      <!-- Right Column: Interactive Simulations & Graphs (7 Cols) -->
       <div class="lg:col-span-7 space-y-6">
 
+        <!-- Live Simulator Control -->
         <div class="bg-gradient-to-r from-indigo-900/40 via-slate-900 to-slate-900 border border-indigo-500/30 rounded-2xl p-6 shadow-xl space-y-4 relative overflow-hidden">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
@@ -303,6 +352,7 @@
           </div>
         </div>
 
+        <!-- Proyección Visual Chart -->
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-4">
           <div class="flex items-center justify-between border-b border-slate-800 pb-3">
             <div class="flex items-center gap-2">
@@ -315,6 +365,7 @@
           </div>
         </div>
 
+        <!-- List of Objectives -->
         <div class="space-y-4">
           <div class="flex items-center justify-between">
             <h2 class="font-semibold text-slate-100 flex items-center gap-2">
@@ -324,7 +375,8 @@
           </div>
 
           <div id="goals-list" class="space-y-4">
-            </div>
+            <!-- Dynamic Goals Cards -->
+          </div>
         </div>
 
       </div>
@@ -338,11 +390,18 @@
     const DEFAULT_STATE = {
       config: {
         income: 2500,
-        expenses: 1400,
-        currentCapital: 5000,
-        investmentCapital: 12000,
-        monthlyTransfer: 300
+        currentCapital: 5000
       },
+      expenseCategories: [
+        { id: '1', name: 'Alojamiento / Hipoteca / Alquiler', amount: 800 },
+        { id: '2', name: 'Alimentación y Supermercado', amount: 350 },
+        { id: '3', name: 'Transporte y Combustible', amount: 150 },
+        { id: '4', name: 'Ocio y Suministros', amount: 200 }
+      ],
+      funds: [
+        { id: '1', name: 'Fondo Indexado MSCI World', initialCapital: 8000, monthlyTransfer: 200 },
+        { id: '2', name: 'PIAS / Plan de Pensiones', initialCapital: 4000, monthlyTransfer: 100 }
+      ],
       extraExpenses: [
         { id: '1', name: 'Seguro Coche', amount: 450, date: '2026-10' }
       ],
@@ -358,7 +417,6 @@
 
     // --- INIT ---
     document.addEventListener('DOMContentLoaded', () => {
-      // Set default input month values
       const now = new Date();
       const currentMonth = now.toISOString().slice(0, 7);
       document.getElementById('expense-date').value = currentMonth;
@@ -376,18 +434,12 @@
 
     function syncInputsFromState() {
       document.getElementById('input-income').value = state.config.income;
-      document.getElementById('input-expenses').value = state.config.expenses;
       document.getElementById('input-current-capital').value = state.config.currentCapital;
-      document.getElementById('input-investment-capital').value = state.config.investmentCapital;
-      document.getElementById('input-monthly-transfer').value = state.config.monthlyTransfer;
     }
 
     function updateConfig() {
       state.config.income = parseFloat(document.getElementById('input-income').value) || 0;
-      state.config.expenses = parseFloat(document.getElementById('input-expenses').value) || 0;
       state.config.currentCapital = parseFloat(document.getElementById('input-current-capital').value) || 0;
-      state.config.investmentCapital = parseFloat(document.getElementById('input-investment-capital').value) || 0;
-      state.config.monthlyTransfer = parseFloat(document.getElementById('input-monthly-transfer').value) || 0;
       
       saveState();
       updateAll();
@@ -399,13 +451,132 @@
       updateAll();
     }
 
-    // --- CALCULATIONS ---
+    // --- HELPER CALCULATIONS ---
+    function getTotalExpenses() {
+      return state.expenseCategories.reduce((sum, item) => sum + item.amount, 0);
+    }
+
+    function getTotalInvestmentInitial() {
+      return state.funds.reduce((sum, fund) => sum + fund.initialCapital, 0);
+    }
+
+    function getTotalInvestmentMonthly() {
+      return state.funds.reduce((sum, fund) => sum + fund.monthlyTransfer, 0);
+    }
+
     function getBaseLiquidSavings() {
-      return Math.max(0, state.config.income - state.config.expenses - state.config.monthlyTransfer);
+      const totalExpenses = getTotalExpenses();
+      const totalTransfers = getTotalInvestmentMonthly();
+      return Math.max(0, state.config.income - totalExpenses - totalTransfers);
     }
 
     function getTotalMonthlySavings() {
       return getBaseLiquidSavings() + extraSimulatedSavings;
+    }
+
+    // --- EXPENSE CATEGORIES ---
+    function addExpenseCategory(e) {
+      e.preventDefault();
+      const name = document.getElementById('cat-name').value;
+      const amount = parseFloat(document.getElementById('cat-amount').value);
+
+      if (!name || isNaN(amount)) return;
+
+      state.expenseCategories.push({ id: Date.now().toString(), name, amount });
+      saveState();
+
+      document.getElementById('cat-name').value = '';
+      document.getElementById('cat-amount').value = '';
+      updateAll();
+    }
+
+    function deleteExpenseCategory(id) {
+      state.expenseCategories = state.expenseCategories.filter(cat => cat.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderExpenseCategories() {
+      const container = document.getElementById('expense-categories-list');
+      const total = getTotalExpenses();
+      document.getElementById('total-segmented-expenses').innerText = `Total: ${total.toLocaleString('es-ES')} €/mes`;
+
+      if (state.expenseCategories.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay categorías definidas.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.expenseCategories.map(cat => `
+        <div class="flex items-center justify-between p-2 bg-slate-950/60 rounded-xl border border-slate-800 text-xs">
+          <span class="font-medium text-slate-300 truncate pr-2">${cat.name}</span>
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-slate-200">${cat.amount.toLocaleString('es-ES')} €</span>
+            <button onclick="deleteExpenseCategory('${cat.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // --- INVESTMENT FUNDS ---
+    function toggleFundForm() {
+      const form = document.getElementById('fund-form');
+      form.classList.toggle('hidden');
+    }
+
+    function addFund(e) {
+      e.preventDefault();
+      const name = document.getElementById('fund-name').value;
+      const initialCapital = parseFloat(document.getElementById('fund-initial').value) || 0;
+      const monthlyTransfer = parseFloat(document.getElementById('fund-monthly').value) || 0;
+
+      if (!name) return;
+
+      state.funds.push({
+        id: Date.now().toString(),
+        name,
+        initialCapital,
+        monthlyTransfer
+      });
+
+      saveState();
+      document.getElementById('fund-name').value = '';
+      document.getElementById('fund-initial').value = '';
+      document.getElementById('fund-monthly').value = '';
+      toggleFundForm();
+      updateAll();
+    }
+
+    function deleteFund(id) {
+      state.funds = state.funds.filter(f => f.id !== id);
+      saveState();
+      updateAll();
+    }
+
+    function renderFunds() {
+      const container = document.getElementById('funds-list');
+      document.getElementById('kpi-funds-count').innerText = `${state.funds.length} fondo(s) configurado(s)`;
+
+      if (state.funds.length === 0) {
+        container.innerHTML = `<p class="text-xs text-slate-500 italic py-2 text-center">No hay fondos creados.</p>`;
+        return;
+      }
+
+      container.innerHTML = state.funds.map(fund => `
+        <div class="p-2.5 bg-slate-950/60 rounded-xl border border-slate-800 text-xs space-y-1">
+          <div class="flex justify-between items-center">
+            <span class="font-semibold text-violet-300">${fund.name}</span>
+            <button onclick="deleteFund('${fund.id}')" class="text-slate-500 hover:text-rose-400 p-1">
+              <i data-lucide="x" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-400">
+            <span>Saldo: <strong class="text-slate-200">${fund.initialCapital.toLocaleString('es-ES')} €</strong></span>
+            <span>Aportación: <strong class="text-amber-400">+${fund.monthlyTransfer.toLocaleString('es-ES')} €/mes</strong></span>
+          </div>
+        </div>
+      `).join('');
     }
 
     // --- EXTRA EXPENSES ---
@@ -451,7 +622,7 @@
             <div class="text-[10px] text-slate-500">${item.date}</div>
           </div>
           <div class="flex items-center gap-2">
-            <span class="font-bold text-amber-400">-${item.amount} €</span>
+            <span class="font-bold text-amber-400">-${item.amount.toLocaleString('es-ES')} €</span>
             <button onclick="deleteExtraExpense('${item.id}')" class="text-slate-500 hover:text-rose-400 p-1">
               <i data-lucide="x" class="w-3.5 h-3.5"></i>
             </button>
@@ -492,10 +663,12 @@
       updateAll();
     }
 
-    // Calculates projection timeline for a specific goal
     function calculateGoalProjection(goal) {
+      const totalInvestmentCap = getTotalInvestmentInitial();
+      const totalInvestmentTransfer = getTotalInvestmentMonthly();
+
       const startCapital = (goal.useInitialCapital ? state.config.currentCapital : 0) + 
-                           (goal.useFunds ? state.config.investmentCapital : 0);
+                           (goal.useFunds ? totalInvestmentCap : 0);
       
       if (startCapital >= goal.amount) {
         return {
@@ -512,31 +685,25 @@
       let currentDate = new Date();
       let accumulated = 0;
 
-      // Simulate month by month accounting for extra expenses and monthly transfer/savings
-      while (accumulated < needed && months < 360) { // max 30 years
+      while (accumulated < needed && months < 360) {
         months++;
         currentDate.setMonth(currentDate.getMonth() + 1);
         const monthKey = currentDate.toISOString().slice(0, 7);
 
-        // Monthly savings base
         let monthlySavings = getTotalMonthlySavings();
 
-        // If goal allows funds, add monthly investment transfer to growth rate
         if (goal.useFunds) {
-          monthlySavings += state.config.monthlyTransfer;
+          monthlySavings += totalInvestmentTransfer;
         }
 
-        // Subtract specific extra expenses for this month
         const extraForMonth = state.extraExpenses
           .filter(e => e.date === monthKey)
           .reduce((sum, e) => sum + e.amount, 0);
 
         monthlySavings -= extraForMonth;
-
         accumulated += Math.max(0, monthlySavings);
       }
 
-      // Calculate Target Date comparison
       const targetDateObj = new Date(goal.targetDate + '-01');
       const now = new Date();
       const targetMonths = (targetDateObj.getFullYear() - now.getFullYear()) * 12 + (targetDateObj.getMonth() - now.getMonth());
@@ -635,7 +802,8 @@
       const investmentData = [];
       
       let currentLiquid = state.config.currentCapital;
-      let currentInvestment = state.config.investmentCapital;
+      let currentInvestment = getTotalInvestmentInitial();
+      const monthlyInvestmentTransfer = getTotalInvestmentMonthly();
       
       const now = new Date();
 
@@ -647,10 +815,8 @@
         labels.push(monthLabel);
 
         if (i > 0) {
-          // Calculate monthly changes
           let liquidNet = getTotalMonthlySavings();
           
-          // Deduct extra expenses for this month
           const extraForMonth = state.extraExpenses
             .filter(e => e.date === monthKey)
             .reduce((sum, e) => sum + e.amount, 0);
@@ -658,7 +824,7 @@
           liquidNet -= extraForMonth;
 
           currentLiquid += liquidNet;
-          currentInvestment += state.config.monthlyTransfer;
+          currentInvestment += monthlyInvestmentTransfer;
         }
 
         liquidData.push(Math.round(currentLiquid));
@@ -683,7 +849,7 @@
               tension: 0.3
             },
             {
-              label: 'Fondos Inversión (€)',
+              label: 'Total Fondos Inversión (€)',
               data: investmentData,
               borderColor: '#8b5cf6',
               backgroundColor: 'rgba(139, 92, 246, 0.1)',
@@ -720,15 +886,15 @@
 
     // --- MAIN RENDER LOOP ---
     function updateAll() {
-      // 1. Refresh KPIs
       document.getElementById('kpi-current-balance').innerText = `${state.config.currentCapital.toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-investment-balance').innerText = `${state.config.investmentCapital.toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-investment-balance').innerText = `${getTotalInvestmentInitial().toLocaleString('es-ES')} €`;
       
       const liquidSavings = getBaseLiquidSavings();
       document.getElementById('kpi-liquid-savings').innerText = `${liquidSavings.toLocaleString('es-ES')} €`;
-      document.getElementById('kpi-monthly-transfer').innerText = `${state.config.monthlyTransfer.toLocaleString('es-ES')} €`;
+      document.getElementById('kpi-monthly-transfer').innerText = `${getTotalInvestmentMonthly().toLocaleString('es-ES')} €`;
 
-      // 2. Render lists & chart
+      renderExpenseCategories();
+      renderFunds();
       renderExtraExpenses();
       renderGoals();
       updateChart();
@@ -776,4 +942,5 @@
     }
   </script>
 </body>
+</html>
 </html>
