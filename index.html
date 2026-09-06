@@ -27,17 +27,15 @@
 
     <!-- SECCIÓN 1: VISTA GENERAL -->
     <section id="sec-general" class="space-y-4">
-      <!-- Tarjeta Capacidad Ahorro -->
       <div class="bg-gradient-to-br from-indigo-900 to-slate-800 border border-indigo-500/30 rounded-2xl p-5 shadow-lg relative overflow-hidden">
         <p class="text-slate-400 text-xs font-semibold uppercase tracking-wider">Capacidad Ahorro Mensual Base</p>
         <div class="flex items-baseline space-x-2 mt-1">
           <span id="txt-ahorro-mensual" class="text-3xl font-extrabold text-emerald-400">0 €</span>
           <span class="text-xs text-slate-400">/ mes</span>
         </div>
-        <p id="txt-ahorro-mes-actual" class="text-[11px] text-indigo-300 mt-2">Ahorro estimado este mes (con extras): 0 €</p>
+        <p id="txt-ahorro-mes-actual" class="text-[11px] text-indigo-300 mt-2">Ahorro estimado este mes: 0 €</p>
       </div>
 
-      <!-- Resumen Patrimonio -->
       <div class="grid grid-cols-3 gap-2">
         <div class="bg-slate-800 p-3 rounded-xl border border-slate-700 text-center">
           <p class="text-[10px] text-slate-400 font-medium">Patrimonio Total</p>
@@ -53,10 +51,12 @@
         </div>
       </div>
 
-      <!-- Lista de Objetivos -->
       <div class="space-y-3">
         <div class="flex justify-between items-center">
-          <h2 class="text-lg font-bold text-white">Mis Objetivos</h2>
+          <div>
+            <h2 class="text-lg font-bold text-white">Mis Objetivos</h2>
+            <p class="text-[10px] text-slate-400">Calculados mediante Cascada de Excedentes</p>
+          </div>
           <button type="button" onclick="abrirModalObjetivo()" class="text-xs bg-indigo-600 hover:bg-indigo-500 text-white px-3 py-1.5 rounded-lg font-semibold flex items-center space-x-1 cursor-pointer">
             <i class="fa-solid fa-plus"></i><span>Nuevo</span>
           </button>
@@ -65,11 +65,10 @@
       </div>
     </section>
 
-    <!-- SECCIÓN 2: INGRESOS Y GASTOS -->
+    <!-- SECCIÓN 2: FINANZAS Y EXTRAS -->
     <section id="sec-finanzas" class="space-y-4 hidden">
       <h2 class="text-lg font-bold text-white">Presupuesto Mensual</h2>
       
-      <!-- Ingresos Base -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <h3 class="text-sm font-semibold text-emerald-400 flex items-center space-x-2">
           <i class="fa-solid fa-wallet"></i><span>Ingreso Recurrente Mensual</span>
@@ -80,7 +79,6 @@
         </div>
       </div>
 
-      <!-- Gastos por Categorías Dinámicas -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="text-sm font-semibold text-rose-400 flex items-center space-x-2">
@@ -93,7 +91,6 @@
         <div id="contenedor-gastos" class="space-y-2"></div>
       </div>
 
-      <!-- Movimientos Extraordinarios por Mes -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
@@ -103,7 +100,7 @@
             <i class="fa-solid fa-plus mr-1"></i>Añadir Extra
           </button>
         </div>
-        <p class="text-xs text-slate-400">Ingresos o gastos puntuales asignados a un mes específico.</p>
+        <p class="text-xs text-slate-400">Gastos e ingresos puntuales asignados a un mes y año específicos (ej: Frigorífico).</p>
         <div id="contenedor-extras" class="space-y-2"></div>
       </div>
     </section>
@@ -112,13 +109,11 @@
     <section id="sec-fondos" class="space-y-4 hidden">
       <h2 class="text-lg font-bold text-white">Gestión de Cuentas y Fondos</h2>
 
-      <!-- Cuenta Corriente -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-2">
         <label class="text-xs text-slate-400">Saldo Cuenta Corriente (€)</label>
         <input type="number" id="inp-cuenta-corriente" value="6000" oninput="guardarSaldoCorriente()" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
       </div>
 
-      <!-- Lista de Fondos de Inversión -->
       <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
         <div class="flex justify-between items-center">
           <h3 class="text-sm font-semibold text-amber-400 flex items-center space-x-2">
@@ -129,18 +124,6 @@
           </button>
         </div>
         <div id="contenedor-fondos" class="space-y-2"></div>
-      </div>
-
-      <!-- Traspaso Automático -->
-      <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-3">
-        <h3 class="text-sm font-semibold text-indigo-400 flex items-center space-x-2">
-          <i class="fa-solid fa-arrow-right-arrow-left"></i><span>Traspaso Automático Mensual</span>
-        </h3>
-        <p class="text-xs text-slate-400">Aportación periódica desde Cuenta Corriente hacia Inversiones.</p>
-        <div>
-          <label class="text-xs text-slate-400">Traspaso Mensual (€)</label>
-          <input type="number" id="inp-traspaso" value="200" oninput="guardarTraspaso()" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-white">
-        </div>
       </div>
     </section>
 
@@ -163,7 +146,7 @@
 
   </main>
 
-  <!-- NAVEGACIÓN INFERIOR FIJA -->
+  <!-- NAV INFERIOR -->
   <nav class="fixed bottom-0 left-0 right-0 bg-slate-800 border-t border-slate-700 p-2 z-50">
     <div class="max-w-lg mx-auto grid grid-cols-4 gap-1 text-center">
       <button type="button" onclick="cambiarTab('general')" id="btn-tab-general" class="py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1 font-bold">
@@ -194,22 +177,16 @@
         <label class="text-xs text-slate-400">Nombre</label>
         <input type="text" id="obj-nombre" placeholder="Ej: Entrada Piso" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
       </div>
-      <div class="grid grid-cols-2 gap-2">
-        <div>
-          <label class="text-xs text-slate-400">Monto (€)</label>
-          <input type="number" id="obj-monto" placeholder="30000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
-        </div>
-        <div>
-          <label class="text-xs text-slate-400">Plazo (meses)</label>
-          <input type="number" id="obj-plazo" placeholder="24" value="12" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
-        </div>
+      <div>
+        <label class="text-xs text-slate-400">Monto (€)</label>
+        <input type="number" id="obj-monto" placeholder="30000" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
       </div>
       <div>
-        <label class="text-xs text-slate-400">Prioridad</label>
+        <label class="text-xs text-slate-400">Prioridad en Cascada</label>
         <select id="obj-prioridad" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
-          <option value="Alta">🔴 Alta</option>
-          <option value="Media" selected>🟡 Media</option>
-          <option value="Baja">🟢 Baja</option>
+          <option value="Alta">🔴 Alta (1º en recibir ahorro)</option>
+          <option value="Media" selected>🟡 Media (2º en recibir ahorro)</option>
+          <option value="Baja">🟢 Baja (3º en recibir ahorro)</option>
         </select>
       </div>
       <div class="space-y-2 text-xs border-t border-slate-700 pt-2">
@@ -220,10 +197,6 @@
         <label class="flex items-center space-x-2 text-slate-300">
           <input type="checkbox" id="obj-usar-fondos" class="rounded bg-slate-900 border-slate-700 text-indigo-600">
           <span>Usar Fondos de Inversión</span>
-        </label>
-        <label class="flex items-center space-x-2 text-slate-300">
-          <input type="checkbox" id="obj-usar-ahorro-futuro" checked class="rounded bg-slate-900 border-slate-700 text-indigo-600">
-          <span>Computar ahorro futuro durante el plazo</span>
         </label>
       </div>
       <div class="flex gap-2 pt-2">
@@ -253,7 +226,7 @@
     </div>
   </div>
 
-  <!-- MODAL: MOVIMIENTO EXTRAORDINARIO -->
+  <!-- MODAL: EXTRAORDINARIO -->
   <div id="modal-extra" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
     <div class="bg-slate-800 border border-slate-700 rounded-2xl p-5 w-full max-w-sm space-y-3 shadow-2xl">
       <h3 id="modal-extra-titulo" class="text-base font-bold text-white">Movimiento Extraordinario</h3>
@@ -267,12 +240,12 @@
       </div>
       <div>
         <label class="text-xs text-slate-400">Concepto</label>
-        <input type="text" id="extra-concepto" placeholder="Ej: Seguro coche, Paga extra..." class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+        <input type="text" id="extra-concepto" placeholder="Ej: Comprar Frigorífico" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
       </div>
-      <div class="grid grid-cols-2 gap-2">
+      <div class="grid grid-cols-3 gap-2">
         <div>
           <label class="text-xs text-slate-400">Monto (€)</label>
-          <input type="number" id="extra-monto" placeholder="300" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
+          <input type="number" id="extra-monto" placeholder="600" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
         </div>
         <div>
           <label class="text-xs text-slate-400">Mes</label>
@@ -290,6 +263,10 @@
             <option value="Noviembre">Noviembre</option>
             <option value="Diciembre">Diciembre</option>
           </select>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400">Año</label>
+          <input type="number" id="extra-anio" value="2026" class="w-full mt-1 bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white outline-none">
         </div>
       </div>
       <div class="flex gap-2 pt-2">
@@ -319,7 +296,6 @@
     </div>
   </div>
 
-  <!-- LÓGICA Y ESTADO -->
   <script>
     const mesesNombres = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
 
@@ -331,23 +307,21 @@
         { id: 3, nombre: "Transporte", monto: 120 }
       ],
       extras: [
-        { id: 1, tipo: 'gasto', concepto: 'Seguro Coche', monto: 300, mes: 'Mayo' },
-        { id: 2, tipo: 'ingreso', concepto: 'Paga Extra', monto: 1200, mes: 'Julio' }
+        { id: 1, tipo: 'gasto', concepto: 'Frigorífico Nuevo', monto: 650, mes: 'Julio', anio: 2026 },
+        { id: 2, tipo: 'ingreso', concepto: 'Paga Extra', monto: 1200, mes: 'Julio', anio: 2026 }
       ],
       corriente: 6000,
       fondos: [
-        { id: 1, nombre: "Fondo Indexado Global", monto: 8000 },
-        { id: 2, nombre: "Fondo Monetario", monto: 3500 }
+        { id: 1, nombre: "Fondo Indexado Global", monto: 8000 }
       ],
-      traspaso: 200,
       objetivos: [
-        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, plazoMeses: 36, prioridad: "Alta", usarFondos: true, usarCorriente: true, usarAhorroFuturo: true },
-        { id: 2, nombre: "✈️ Viaje Japón", monto: 3000, plazoMeses: 10, prioridad: "Media", usarFondos: false, usarCorriente: false, usarAhorroFuturo: true }
+        { id: 1, nombre: "🏠 Entrada Piso", monto: 40000, prioridad: "Alta", usarFondos: true, usarCorriente: true },
+        { id: 2, nombre: "✈️ Viaje a Perú", monto: 3000, prioridad: "Media", usarFondos: false, usarCorriente: false }
       ]
     };
 
     function inicializar() {
-      const guardado = localStorage.getItem('planifica_data_v4');
+      const guardado = localStorage.getItem('planifica_data_v5');
       if (guardado) {
         try { estado = JSON.parse(guardado); } catch(e) {}
       }
@@ -364,28 +338,20 @@
       document.getElementById(`btn-tab-${tab}`).className = "py-2 px-1 rounded-xl text-indigo-400 flex flex-col items-center space-y-1 font-bold";
     }
 
-    function totalFondos() {
-      return (estado.fondos || []).reduce((acc, f) => acc + Number(f.monto || 0), 0);
-    }
+    function totalFondos() { return (estado.fondos || []).reduce((acc, f) => acc + Number(f.monto || 0), 0); }
+    function totalGastosBase() { return (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0); }
+    function calcularAhorroBase() { return Math.max(0, Number(estado.ingresos || 0) - totalGastosBase()); }
 
-    function totalGastosBase() {
-      return (estado.gastos || []).reduce((acc, g) => acc + Number(g.monto || 0), 0);
-    }
-
-    function calcularAhorroBase() {
-      return Math.max(0, Number(estado.ingresos || 0) - totalGastosBase());
-    }
-
-    function obtenerMesActualNombre() {
-      const idx = new Date().getMonth();
-      return mesesNombres[idx];
+    function obtenerMesAnoActual() {
+      const fecha = new Date();
+      return { mes: mesesNombres[fecha.getMonth()], anio: fecha.getFullYear() };
     }
 
     function calcularAhorroMesActual() {
-      const mesActual = obtenerMesActualNombre();
+      const actual = obtenerMesAnoActual();
       let ahorro = calcularAhorroBase();
       
-      (estado.extras || []).filter(e => e.mes === mesActual).forEach(e => {
+      (estado.extras || []).filter(e => e.mes === actual.mes && Number(e.anio) === actual.anio).forEach(e => {
         if (e.tipo === 'ingreso') ahorro += Number(e.monto || 0);
         if (e.tipo === 'gasto') ahorro -= Number(e.monto || 0);
       });
@@ -397,9 +363,10 @@
       const ahorroBase = calcularAhorroBase();
       const ahorroMes = calcularAhorroMesActual();
       const patrimonio = Number(estado.corriente || 0) + totalFondos();
+      const actual = obtenerMesAnoActual();
 
       document.getElementById('txt-ahorro-mensual').innerText = `${ahorroBase.toLocaleString()} €`;
-      document.getElementById('txt-ahorro-mes-actual').innerText = `Ahorro estimado este mes (${obtenerMesActualNombre()}): ${ahorroMes.toLocaleString()} €`;
+      document.getElementById('txt-ahorro-mes-actual').innerText = `Ahorro estimado en ${actual.mes} ${actual.anio}: ${ahorroMes.toLocaleString()} €`;
       document.getElementById('txt-patrimonio-total').innerText = `${patrimonio.toLocaleString()} €`;
       document.getElementById('txt-cuenta-corriente').innerText = `${Number(estado.corriente || 0).toLocaleString()} €`;
       document.getElementById('txt-fondos-total').innerText = `${totalFondos().toLocaleString()} €`;
@@ -407,10 +374,10 @@
       renderizarGastos();
       renderizarExtras();
       renderizarFondos();
-      renderizarObjetivos();
+      renderizarObjetivosCascada();
       actualizarSimulacion();
 
-      localStorage.setItem('planifica_data_v4', JSON.stringify(estado));
+      localStorage.setItem('planifica_data_v5', JSON.stringify(estado));
     }
 
     function renderizarGastos() {
@@ -442,7 +409,7 @@
           <div class="flex justify-between items-center bg-slate-900 p-2.5 rounded-lg border border-slate-700/50 text-xs">
             <div>
               <span class="font-semibold text-white block">${e.concepto}</span>
-              <span class="text-[10px] text-slate-400">${e.mes}</span>
+              <span class="text-[10px] text-slate-400">${e.mes} ${e.anio || 2026}</span>
             </div>
             <div class="flex items-center space-x-2">
               <span class="font-bold px-2 py-0.5 rounded ${badgeColor}">${signo}${Number(e.monto).toLocaleString()} €</span>
@@ -471,27 +438,43 @@
       });
     }
 
-    function renderizarObjetivos() {
+    // --- CÁLCULO DE CASCADA DE EXCEDENTES ---
+    function renderizarObjetivosCascada() {
       const cont = document.getElementById('contenedor-objetivos');
       cont.innerHTML = '';
 
-      const orden = { "Alta": 1, "Media": 2, "Baja": 3 };
-      const listaOrdenada = [...(estado.objetivos || [])].sort((a,b) => orden[a.prioridad] - orden[b.prioridad]);
-      const ahorroBase = calcularAhorroBase();
+      const ordenPrioridad = { "Alta": 1, "Media": 2, "Baja": 3 };
+      const objetivosOrdenados = [...(estado.objetivos || [])].sort((a,b) => ordenPrioridad[a.prioridad] - ordenPrioridad[b.prioridad]);
+      const ahorroBaseMensual = calcularAhorroBase();
 
-      listaOrdenada.forEach(obj => {
-        let capitalComputable = 0;
-        if (obj.usarCorriente) capitalComputable += Number(estado.corriente || 0);
-        if (obj.usarFondos) capitalComputable += totalFondos();
+      let corrienteDisponible = Number(estado.corriente || 0);
+      let fondosDisponibles = totalFondos();
+      let mesesAcumuladosTotales = 0;
+
+      objetivosOrdenados.forEach(obj => {
+        let capitalInicialAsignado = 0;
         
-        const plazo = Number(obj.plazoMeses || 12);
-        if (obj.usarAhorroFuturo) {
-          capitalComputable += (ahorroBase * plazo);
+        if (obj.usarCorriente && corrienteDisponible > 0) {
+          capitalInicialAsignado += corrienteDisponible;
+        }
+        if (obj.usarFondos && fondosDisponibles > 0) {
+          capitalInicialAsignado += fondosDisponibles;
         }
 
-        const pct = Math.min(100, Math.round((capitalComputable / obj.monto) * 100));
-        const cuotaMensualNecesaria = Math.max(0, Math.ceil((obj.monto - (capitalComputable - (obj.usarAhorroFuturo ? ahorroBase * plazo : 0))) / plazo));
+        const faltante = Math.max(0, obj.monto - capitalInicialAsignado);
+        const mesesNecesarios = ahorroBaseMensual > 0 ? Math.ceil(faltante / ahorroBaseMensual) : Infinity;
+        
+        if (capitalInicialAsignado >= obj.monto) {
+          const exceso = capitalInicialAsignado - obj.monto;
+          if (obj.usarCorriente) corrienteDisponible = exceso;
+          if (obj.usarFondos) fondosDisponibles = 0; 
+        } else {
+          corrienteDisponible = 0;
+          fondosDisponibles = 0;
+          if (mesesNecesarios !== Infinity) mesesAcumuladosTotales += mesesNecesarios;
+        }
 
+        const pctInicial = Math.min(100, Math.round((capitalInicialAsignado / obj.monto) * 100));
         const colorPrioridad = obj.prioridad === 'Alta' ? 'bg-rose-500/20 text-rose-300 border-rose-500/30' : 
                               (obj.prioridad === 'Media' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30');
 
@@ -500,7 +483,7 @@
             <div class="flex justify-between items-start">
               <div>
                 <h4 class="font-bold text-white text-sm">${obj.nombre}</h4>
-                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} € en ${plazo} meses</p>
+                <p class="text-[11px] text-slate-400">Meta: ${Number(obj.monto).toLocaleString()} €</p>
               </div>
               <div class="flex items-center space-x-1">
                 <span class="text-[10px] px-2 py-0.5 rounded-full border ${colorPrioridad}">${obj.prioridad}</span>
@@ -510,12 +493,12 @@
             </div>
             
             <div class="w-full bg-slate-900 rounded-full h-2 overflow-hidden">
-              <div class="${pct >= 100 ? 'bg-emerald-500' : 'bg-indigo-500'} h-2 rounded-full" style="width: ${pct}%"></div>
+              <div class="bg-indigo-500 h-2 rounded-full" style="width: ${pctInicial}%"></div>
             </div>
             
-            <div class="flex justify-between text-[10px] text-slate-400">
-              <span>Cuota necesaria: <strong class="text-indigo-300">${cuotaMensualNecesaria.toLocaleString()} €/mes</strong></span>
-              <span class="font-bold ${pct >= 100 ? 'text-emerald-400' : 'text-indigo-300'}">${pct}% cubierto</span>
+            <div class="flex justify-between text-[10px] text-slate-400 pt-1">
+              <span>Capital Base: <strong class="text-slate-200">${capitalInicialAsignado.toLocaleString()} €</strong></span>
+              <span class="text-indigo-300 font-bold">Completado en ~${mesesAcumuladosTotales} meses</span>
             </div>
           </div>
         `;
@@ -530,21 +513,36 @@
       const cont = document.getElementById('contenedor-proyeccion-objetivos');
       cont.innerHTML = '';
 
-      (estado.objetivos || []).forEach(obj => {
+      let corrienteDisponible = Number(estado.corriente || 0);
+      let fondosDisponibles = totalFondos();
+      let mesesAcumuladosTotales = 0;
+
+      const ordenPrioridad = { "Alta": 1, "Media": 2, "Baja": 3 };
+      const objetivosOrdenados = [...(estado.objetivos || [])].sort((a,b) => ordenPrioridad[a.prioridad] - ordenPrioridad[b.prioridad]);
+
+      objetivosOrdenados.forEach(obj => {
         let base = 0;
-        if (obj.usarCorriente) base += Number(estado.corriente || 0);
-        if (obj.usarFondos) base += totalFondos();
+        if (obj.usarCorriente && corrienteDisponible > 0) base += corrienteDisponible;
+        if (obj.usarFondos && fondosDisponibles > 0) base += fondosDisponibles;
 
         const faltante = Math.max(0, obj.monto - base);
         const meses = ahorroTotalMensual > 0 ? Math.ceil(faltante / ahorroTotalMensual) : Infinity;
+
+        if (base >= obj.monto) {
+          if (obj.usarCorriente) corrienteDisponible = base - obj.monto;
+        } else {
+          corrienteDisponible = 0;
+          fondosDisponibles = 0;
+          if (meses !== Infinity) mesesAcumuladosTotales += meses;
+        }
 
         cont.innerHTML += `
           <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 space-y-1">
             <div class="flex justify-between items-center text-xs">
               <span class="font-bold text-white">${obj.nombre}</span>
-              <span class="text-indigo-400 font-bold">${meses === Infinity ? 'Indefinido' : meses + ' meses'}</span>
+              <span class="text-indigo-400 font-bold">${mesesAcumuladosTotales === Infinity ? 'Indefinido' : 'En ' + mesesAcumuladosTotales + ' meses'}</span>
             </div>
-            <p class="text-[11px] text-slate-400">Faltante sin ahorros futuros: ${faltante.toLocaleString()} € (${ahorroTotalMensual} €/mes)</p>
+            <p class="text-[11px] text-slate-400">Ritmo simulado: ${ahorroTotalMensual} €/mes en cascada</p>
           </div>
         `;
       });
@@ -553,17 +551,15 @@
     function cargarInputsFijos() {
       document.getElementById('inp-ingresos').value = estado.ingresos || 0;
       document.getElementById('inp-cuenta-corriente').value = estado.corriente || 0;
-      document.getElementById('inp-traspaso').value = estado.traspaso || 0;
     }
 
     function actualizarIngresos() { estado.ingresos = Number(document.getElementById('inp-ingresos').value || 0); renderizarTodo(); }
     function guardarSaldoCorriente() { estado.corriente = Number(document.getElementById('inp-cuenta-corriente').value || 0); renderizarTodo(); }
-    function guardarTraspaso() { estado.traspaso = Number(document.getElementById('inp-traspaso').value || 0); renderizarTodo(); }
 
     function abrirModal(id) { document.getElementById(id).classList.remove('hidden'); }
     function cerrarModal(id) { document.getElementById(id).classList.add('hidden'); }
 
-    // --- OBJETIVO (Añadir / Editar) ---
+    // --- MODALES ---
     function abrirModalObjetivo(id = null) {
       document.getElementById('obj-id').value = id || '';
       if (id) {
@@ -571,20 +567,16 @@
         document.getElementById('modal-obj-titulo').innerText = "Editar Objetivo";
         document.getElementById('obj-nombre').value = item.nombre;
         document.getElementById('obj-monto').value = item.monto;
-        document.getElementById('obj-plazo').value = item.plazoMeses || 12;
         document.getElementById('obj-prioridad').value = item.prioridad;
         document.getElementById('obj-usar-corriente').checked = item.usarCorriente;
         document.getElementById('obj-usar-fondos').checked = item.usarFondos;
-        document.getElementById('obj-usar-ahorro-futuro').checked = item.usarAhorroFuturo !== false;
       } else {
         document.getElementById('modal-obj-titulo').innerText = "Nuevo Objetivo";
         document.getElementById('obj-nombre').value = '';
         document.getElementById('obj-monto').value = '';
-        document.getElementById('obj-plazo').value = 12;
         document.getElementById('obj-prioridad').value = 'Media';
         document.getElementById('obj-usar-corriente').checked = true;
         document.getElementById('obj-usar-fondos').checked = false;
-        document.getElementById('obj-usar-ahorro-futuro').checked = true;
       }
       abrirModal('modal-objetivo');
     }
@@ -593,26 +585,23 @@
       const id = Number(document.getElementById('obj-id').value);
       const nombre = document.getElementById('obj-nombre').value.trim();
       const monto = Number(document.getElementById('obj-monto').value);
-      const plazoMeses = Number(document.getElementById('obj-plazo').value);
       const prioridad = document.getElementById('obj-prioridad').value;
       const usarCorriente = document.getElementById('obj-usar-corriente').checked;
       const usarFondos = document.getElementById('obj-usar-fondos').checked;
-      const usarAhorroFuturo = document.getElementById('obj-usar-ahorro-futuro').checked;
 
-      if (nombre && !isNaN(monto) && monto > 0 && plazoMeses > 0) {
+      if (nombre && !isNaN(monto) && monto > 0) {
         if (!estado.objetivos) estado.objetivos = [];
         if (id) {
           const idx = estado.objetivos.findIndex(o => o.id === id);
-          if (idx !== -1) estado.objetivos[idx] = { id, nombre, monto, plazoMeses, prioridad, usarCorriente, usarFondos, usarAhorroFuturo };
+          if (idx !== -1) estado.objetivos[idx] = { id, nombre, monto, prioridad, usarCorriente, usarFondos };
         } else {
-          estado.objetivos.push({ id: Date.now(), nombre, monto, plazoMeses, prioridad, usarCorriente, usarFondos, usarAhorroFuturo });
+          estado.objetivos.push({ id: Date.now(), nombre, monto, prioridad, usarCorriente, usarFondos });
         }
         cerrarModal('modal-objetivo');
         renderizarTodo();
       }
     }
 
-    // --- GASTO RECURRENTE (Añadir / Editar) ---
     function abrirModalGasto(id = null) {
       document.getElementById('gasto-id').value = id || '';
       if (id) {
@@ -646,8 +635,8 @@
       }
     }
 
-    // --- EXTRAORDINARIOS (Añadir / Editar) ---
     function abrirModalExtra(id = null) {
+      const actual = obtenerMesAnoActual();
       document.getElementById('extra-id').value = id || '';
       if (id) {
         const item = estado.extras.find(e => e.id === id);
@@ -656,12 +645,14 @@
         document.getElementById('extra-concepto').value = item.concepto;
         document.getElementById('extra-monto').value = item.monto;
         document.getElementById('extra-mes').value = item.mes;
+        document.getElementById('extra-anio').value = item.anio || 2026;
       } else {
         document.getElementById('modal-extra-titulo').innerText = "Nuevo Movimiento Extra";
         document.getElementById('extra-tipo').value = 'gasto';
         document.getElementById('extra-concepto').value = '';
         document.getElementById('extra-monto').value = '';
-        document.getElementById('extra-mes').value = obtenerMesActualNombre();
+        document.getElementById('extra-mes').value = actual.mes;
+        document.getElementById('extra-anio').value = actual.anio;
       }
       abrirModal('modal-extra');
     }
@@ -672,21 +663,21 @@
       const concepto = document.getElementById('extra-concepto').value.trim();
       const monto = Number(document.getElementById('extra-monto').value);
       const mes = document.getElementById('extra-mes').value;
+      const anio = Number(document.getElementById('extra-anio').value);
 
-      if (concepto && !isNaN(monto) && monto > 0) {
+      if (concepto && !isNaN(monto) && monto > 0 && anio > 2020) {
         if (!estado.extras) estado.extras = [];
         if (id) {
           const idx = estado.extras.findIndex(e => e.id === id);
-          if (idx !== -1) estado.extras[idx] = { id, tipo, concepto, monto, mes };
+          if (idx !== -1) estado.extras[idx] = { id, tipo, concepto, monto, mes, anio };
         } else {
-          estado.extras.push({ id: Date.now(), tipo, concepto, monto, mes });
+          estado.extras.push({ id: Date.now(), tipo, concepto, monto, mes, anio });
         }
         cerrarModal('modal-extra');
         renderizarTodo();
       }
     }
 
-    // --- FONDO INVERSIÓN (Añadir / Editar) ---
     function abrirModalFondo(id = null) {
       document.getElementById('fondo-id').value = id || '';
       if (id) {
@@ -720,7 +711,6 @@
       }
     }
 
-    // --- ELIMINAR ---
     function eliminarGasto(id) { estado.gastos = estado.gastos.filter(g => g.id !== id); renderizarTodo(); }
     function eliminarExtra(id) { estado.extras = estado.extras.filter(e => e.id !== id); renderizarTodo(); }
     function eliminarFondo(id) { estado.fondos = estado.fondos.filter(f => f.id !== id); renderizarTodo(); }
